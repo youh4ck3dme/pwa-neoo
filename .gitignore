@@ -36,3 +36,5 @@ next-env.d.ts
 
 # old backup
 /_old/
+
+.vercel

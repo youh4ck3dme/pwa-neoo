@@ -35,7 +35,7 @@ const About = () => {
           
           <div className="relative order-1 lg:order-2">
             <div className="absolute -inset-4 bg-primary-100/30 rounded-[2.5rem] rotate-3 -z-10"></div>
-            <img src="https://images.unsplash.com/photo-1664575602554-2087b04935a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+            <img src="https://images.pexels.com/photos/374559/pexels-photo-374559.jpeg"
                  alt="AI Research" className="rounded-[7px] shadow-2xl w-full object-cover aspect-[4/3]" />
             
             <div className="absolute -bottom-10 -right-6 lg:-right-10 bg-white p-8 rounded-[7px] shadow-2xl border border-slate-100 animate-float">
