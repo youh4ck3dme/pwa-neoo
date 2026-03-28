@@ -107,6 +107,9 @@ const toolsData = {
     { name: "Render", desc: "Static + backend, free tier s PostgreSQL databázou", url: "https://render.com" },
     { name: "Cloudflare Pages", desc: "Najrýchlejší CDN zadarmo, unlimited bandwidth", url: "https://pages.cloudflare.com" },
     { name: "Netlify", desc: "Forms + Functions zadarmo, intuívny deploy", url: "https://netlify.com" },
+    { name: "Fly.io", desc: "Deploy kdekedy na svete, low latency, free tier s 3x 256MB", url: "https://fly.io" },
+    { name: "Deno Deploy", desc: "Edge computing, serverless Deno runtime, zdarma", url: "https://deno.com/deploy" },
+    { name: "Heroku", desc: "Klasika, PHP/Node/Python, $5/mesiac dyno", url: "https://www.heroku.com" },
   ]},
   database: { title: "🗄️ Databázy (free tier)", items: [
     { name: "Supabase", desc: "Postgres + Auth + Storage zadarmo, 500MB", url: "https://supabase.com" },
@@ -114,6 +117,9 @@ const toolsData = {
     { name: "Turso", desc: "SQLite na edge, 9GB free, replikácia", url: "https://turso.tech" },
     { name: "MongoDB Atlas", desc: "512MB free cluster, auto-scaling", url: "https://www.mongodb.com/atlas" },
     { name: "PlanetScale", desc: "MySQL s branching, dev branches zadarmo", url: "https://planetscale.com" },
+    { name: "Firebase Realtime DB", desc: "NoSQL realtime databáza, 100 concurrent connections free", url: "https://firebase.google.com/products/realtime-database" },
+    { name: "Vercel KV", desc: "Redis zadarmo na edge, 3000 commands/deň", url: "https://vercel.com/storage/kv" },
+    { name: "EdgeDB", desc: "SQL supermacht, free tier, type-safe queries", url: "https://www.edgedb.com" },
   ]},
   auth: { title: "🔐 Auth & Bezpečnosť", items: [
     { name: "Clerk", desc: "Najkrajší login UI, 10 000 MAU zadarmo, social logins", url: "https://clerk.com" },
@@ -121,6 +127,9 @@ const toolsData = {
     { name: "Auth0", desc: "7 500 MAU zadarmo, 30+ integrácií", url: "https://auth0.com" },
     { name: "Lucia", desc: "Lightweight auth library, full control, session-based", url: "https://lucia-auth.com" },
     { name: "Better Auth", desc: "Nový štandard 2025, best-in-class DX", url: "https://www.better-auth.com" },
+    { name: "Ory", desc: "Open-source identity platform, self-hosted možnosť", url: "https://www.ory.sh" },
+    { name: "Magic.link", desc: "Passwordless auth s Magic Links, free tier", url: "https://magic.link" },
+    { name: "Okta", desc: "Enterprise auth solution, developer free tier", url: "https://www.okta.com" },
   ]},
   design: { title: "🎨 Design, Ikony & Assets", items: [
     { name: "Lucide Icons", desc: "1000+ SVG ikon, React ready, consistency", url: "https://lucide.dev" },
@@ -128,6 +137,9 @@ const toolsData = {
     { name: "Phosphor Icons", desc: "6000+ ikon, 6 štýlov, pixel-perfect", url: "https://phosphoricons.com" },
     { name: "Unsplash", desc: "Free stock fotky, API aj web interface", url: "https://unsplash.com" },
     { name: "Pexels", desc: "Alternatíva k Unsplash, 100 000+ fotiek", url: "https://www.pexels.com" },
+    { name: "Figma", desc: "Design tool zadarmo, collaboration, prototyping", url: "https://www.figma.com" },
+    { name: "Penpot", desc: "Open-source Figma alternatíva, community driven", url: "https://penpot.app" },
+    { name: "Adobe Color", desc: "Generuj color palety z fotiek alebo kľúčových slov", url: "https://color.adobe.com" },
   ]},
   cms: { title: "📦 CMS & Obsah", items: [
     { name: "Sanity.io", desc: "Headless CMS, 200k API calls zadarmo, powerful", url: "https://www.sanity.io" },
@@ -135,6 +147,9 @@ const toolsData = {
     { name: "Payload CMS", desc: "Open-source, self-hosted, built s TypeScript", url: "https://payloadcms.com" },
     { name: "Notion API", desc: "Použi Notion ako CMS cez API", url: "https://developers.notion.com" },
     { name: "MDX / next-mdx-remote", desc: "Markdown s React komponentami ako CMS", url: "https://github.com/hashicorp/next-mdx-remote" },
+    { name: "Ghost", desc: "Open-source blogovacia platforma, moderný editor", url: "https://ghost.org" },
+    { name: "Strapi", desc: "Headless CMS Node.js, open-source, fully customizable", url: "https://strapi.io" },
+    { name: "Hygraph", desc: "Federated CMS, multi-environment, contentful konkurent", url: "https://hygraph.com" },
   ]},
 };
 
@@ -146,6 +161,9 @@ const templatesData = {
     { name: "Shadcn/ui Examples", desc: "Admin dashboard, mail app, music player", url: "https://ui.shadcn.com/examples" },
     { name: "Next.js Commerce", desc: "E-commerce starter od Verelu", url: "https://github.com/vercel/commerce" },
     { name: "Taxonomy (shadcn)", desc: "Blog + Dashboard starter s autentifikáciou", url: "https://tx.shadcn.com" },
+    { name: "Astro Templates", desc: "Medzipodlažie pre HTML, statické + islands", url: "https://astro.build/themes" },
+    { name: "Remix Templates", desc: "Full-stack framework, server + client routers", url: "https://remix.run" },
+    { name: "SvelteKit Starter", desc: "Modern Svelte framework, reactive magic", url: "https://kit.svelte.dev" },
   ]},
   design: { title: "🎨 Figma & Design Kits (zadarmo)", items: [
     { name: "Figma Community", desc: "10 000+ free UI kits a šablón", url: "https://www.figma.com/community" },
@@ -153,6 +171,9 @@ const templatesData = {
     { name: "Shadcn/ui", desc: "Copy-paste React komponenty, Tailwind + Radix", url: "https://ui.shadcn.com" },
     { name: "DaisyUI", desc: "Tailwind component library, 400+ komponentov", url: "https://daisyui.com" },
     { name: "Flowbase", desc: "Webflow UI kit templates, paid+free", url: "https://www.flowbase.co" },
+    { name: "Material UI", desc: "Google Material Design komponenty, production-ready", url: "https://mui.com" },
+    { name: "Mantine", desc: "React components library, 100+ hooks zadarmo", url: "https://mantine.dev" },
+    { name: "Chakra UI", desc: "Accessible React UI library, component-first", url: "https://chakra-ui.com" },
   ]},
   landing: { title: "📄 Landing Page Šablóny", items: [
     { name: "Cruip", desc: "Profi SaaS šablóny, free + premium sekcie", url: "https://cruip.com" },
@@ -160,6 +181,9 @@ const templatesData = {
     { name: "Preline UI", desc: "Free Tailwind UI komponenty, produksné ready", url: "https://preline.co" },
     { name: "Flowrift", desc: "Copy-paste Tailwind sekcie na landing pages", url: "https://flowrift.com" },
     { name: "Tailwind UI Components", desc: "Premium-quality komponenty (free previews)", url: "https://tailwindui.com/components" },
+    { name: "Relume", desc: "AI generuje landing pages z popisu, webflow export", url: "https://www.relume.io" },
+    { name: "Section.js", desc: "Pre-built landing page sekcie, ready-to-use", url: "https://sectionjs.com" },
+    { name: "Minimal.so", desc: "Beautiful minimal landing pages, super simple", url: "https://minimal.so" },
   ]},
   ecommerce: { title: "🛒 E-commerce & Biznis", items: [
     { name: "Medusa.js", desc: "Open-source Shopify alternative, API-first", url: "https://medusajs.com" },
@@ -167,6 +191,9 @@ const templatesData = {
     { name: "Shopify Hydrogen", desc: "Headless Shopify, React + Remix framework", url: "https://hydrogen.shopify.dev" },
     { name: "WooCommerce", desc: "WordPress e-commerce plugin, najrozšírenejší", url: "https://woocommerce.com" },
     { name: "OpenCart", desc: "Classic free e-commerce, self-hosted", url: "https://www.opencart.com" },
+    { name: "PrestaShop", desc: "PHP e-commerce, community supportovaný", url: "https://www.prestashop.com" },
+    { name: "Sylius", desc: "Flexibilný API-first e-commerce framework", url: "https://sylius.com" },
+    { name: "Spree Commerce", desc: "Ruby on Rails e-commerce, enterprise-ready", url: "https://spreecommerce.org" },
   ]},
 };
 
