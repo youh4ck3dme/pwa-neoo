@@ -3,6 +3,14 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { processZipFiles, type ProcessedFile } from "@/hooks/useZipProcessor";
 
+const generateAiImageUrl = (title: string, technologies: string[], description: string): string => {
+  const techStr = technologies.slice(0, 3).join(" ");
+  const descStr = description.slice(0, 60);
+  const prompt = `${title} ${techStr} ${descStr} modern web application UI screenshot professional dark gradient clean interface`;
+  const seed = Math.floor(Math.random() * 999998) + 1;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=600&seed=${seed}&nologo=true&enhance=true`;
+};
+
 interface Project {
   title: string;
   imageUrl: string;
@@ -32,6 +40,7 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
   const [processedFiles, setProcessedFiles] = useState<ProcessedFile[]>([]);
   const [statusMsg, setStatusMsg] = useState("Čítam ZIP...");
   const [errorMsg, setErrorMsg] = useState("");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Auto-extract metadata from ZIP
   useEffect(() => {
@@ -74,6 +83,14 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
         setTitle(extractedTitle);
         setShortDescription(extractedDesc);
         setTechnologies(extractedTechs.join(", "));
+
+        // Generate AI image
+        setIsGeneratingImage(true);
+        setStatusMsg("Generujem AI obrázok...");
+        const aiUrl = generateAiImageUrl(extractedTitle, extractedTechs, extractedDesc);
+        setImageUrl(aiUrl);
+        setIsGeneratingImage(false);
+
         setStage("form");
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Neznáma chyba";
@@ -296,17 +313,47 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
                   />
                 </div>
 
-                {/* URL obrázka */}
+                {/* AI Image Preview + Regenerate */}
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
-                    URL obrázka projektu
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-bold text-slate-700">
+                      AI Obrázok projektu ✨
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const techs = technologies.split(",").map(t => t.trim()).filter(Boolean);
+                        setImageUrl(generateAiImageUrl(title, techs, shortDescription));
+                      }}
+                      className="text-xs px-3 py-1 bg-primary-50 text-primary-600 border border-primary-200 rounded-full hover:bg-primary-100 transition-colors font-medium flex items-center gap-1"
+                    >
+                      <i className="fas fa-sync-alt text-[10px]"></i>
+                      Vygenerovať znova
+                    </button>
+                  </div>
+                  {isGeneratingImage ? (
+                    <div className="w-full h-40 bg-slate-100 rounded-lg flex items-center justify-center">
+                      <i className="fas fa-spinner fa-spin text-primary-400 text-xl"></i>
+                    </div>
+                  ) : (
+                    <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-50 h-40 mb-2">
+                      <img
+                        src={imageUrl}
+                        alt="AI preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x600?text=Generating..."; }}
+                      />
+                      <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        🤖 AI Generated
+                      </div>
+                    </div>
+                  )}
                   <input
                     type="url"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-xs text-slate-500"
                     required
                   />
                 </div>

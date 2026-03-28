@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProjectCard from "@/components/ui/ProjectCard";
 import DropZone from "@/components/sections/DropZone";
 import UploadModal from "@/components/sections/UploadModal";
@@ -21,8 +21,21 @@ const Portfolio = () => {
     specialFeatures: ["E2EE Encryption", "Biometrics", "Audit Logs", "PWA"]
   };
 
-  const [projects, setProjects] = useState<Project[]>([sampleProject]);
+  const [projects, setProjects] = useState<Project[]>(() => {
+    if (typeof window === "undefined") return [sampleProject];
+    try {
+      const saved = localStorage.getItem("magica-portfolio-projects");
+      if (saved) return JSON.parse(saved) as Project[];
+    } catch {}
+    return [sampleProject];
+  });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("magica-portfolio-projects", JSON.stringify(projects));
+    } catch {}
+  }, [projects]);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
