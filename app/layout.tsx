@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
 import PWA from "@/components/PWA";
 
-const montserrat = Montserrat({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-montserrat",
+  variable: "--font-outfit",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -166,7 +167,7 @@ export default function RootLayout({
         {/* Apple Touch Icon */}
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
       </head>
-      <body className={`${montserrat.variable} font-sans antialiased bg-[#fcfcfc] mesh-gradient`}>
+      <body className={`${outfit.variable} font-body antialiased bg-[#fcfcfc] mesh-gradient`}>
         <PWA />
         {children}
       </body>

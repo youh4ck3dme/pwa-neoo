@@ -9,7 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-montserrat)", "sans-serif"],
+        body: ["-apple-system", "BlinkMacSystemFont", "San Francisco", "Segoe UI", "system-ui", "sans-serif"],
+        heading: ["var(--font-outfit)", "sans-serif"],
+        sans: ["var(--font-outfit)", "sans-serif"],
       },
       colors: {
         primary: {
