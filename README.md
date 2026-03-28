@@ -2,6 +2,37 @@
 
 Progressive Web Application s inteligentným ZIP Labs portfolio managementom.
 
+> **Status**: 🟢 Production-ready MVP (28.03.2026)
+> **Dev Server**: http://localhost:3003 (auto-port fallback)
+> **Deployment**: pwa.magicasro.cloud (DNS: 76.76.21.21)
+
+## 📋 Current Status
+
+### ✅ Completed Features
+- ZIP Labs portfolio auto-fill with AI image generation
+- Admin dashboard (50+ resources, 5 tabs)
+- Font upgrade: Outfit + Apple San Francisco
+- Responsive mobile-first design
+- Service worker for PWA
+- Security headers (CSP, HSTS, CSP, Permissions-Policy)
+- Static asset serving (CSS/JS MIME types fixed)
+
+### ⏳ Pending (Requires Supabase + Vercel Setup)
+- Supabase integration for persistent storage
+- Admin Sandbox tab (isolated ZIP preview)
+- Admin Deploy tab (one-click Vercel deployment)
+- Database API routes
+
+**→ See [DEVELOPMENT.md](./DEVELOPMENT.md) for full integration guide**
+
+## 📚 Documentation
+
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)** — Full integration guide (Supabase + Vercel) with architecture diagrams
+- **[ISSUES.md](./ISSUES.md)** — Known issues, breaking points & debugging guide (READ THIS if UI breaks!)
+- **[ENV_SETUP.md](./ENV_SETUP.md)** — Environment configuration status & troubleshooting
+
+---
+
 ## 🚀 Features
 
 ### ZIP Labs Integration
@@ -96,8 +127,17 @@ npm run test:coverage
 
 ### Environment Variables (`.env.local`)
 
+**Required for development:**
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+**Required for Supabase + Vercel integration** (set up in [DEVELOPMENT.md](./DEVELOPMENT.md)):
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_KEY=eyJ...
+VERCEL_DEPLOY_HOOK_URL=https://api.vercel.com/v1/integrations/deploy/...
 ```
 
 ### Security Headers
