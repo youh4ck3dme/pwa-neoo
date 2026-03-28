@@ -1,3 +1,6 @@
+import workflowPkg from 'workflow/next';
+const { withWorkflow } = workflowPkg;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -33,4 +36,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withWorkflow(nextConfig);

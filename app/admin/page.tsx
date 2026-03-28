@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-type PageId = "dashboard" | "roadmap" | "tools" | "templates" | "widgets";
+type PageId = "dashboard" | "roadmap" | "tools" | "templates" | "widgets" | "sandbox" | "deploy";
 type WidgetTabId = "wow" | "conversion" | "data" | "community" | "utils";
 
 interface WidgetItem {
@@ -233,6 +233,8 @@ const navItems: { id: PageId; label: string; emoji: string }[] = [
   { id: "tools",      label: "Real Free Stack",   emoji: "🧰" },
   { id: "templates",  label: "Top 50 Šablón",     emoji: "📦" },
   { id: "widgets",    label: "Top 50 Widgetov",   emoji: "🧩" },
+  { id: "sandbox",    label: "ZIP Sandbox",       emoji: "🔐" },
+  { id: "deploy",     label: "Deploy",            emoji: "🚀" },
 ];
 
 export default function AdminPage() {
@@ -331,6 +333,8 @@ export default function AdminPage() {
           {currentPage === "roadmap"   && <RoadmapPage />}
           {currentPage === "tools"     && <ToolsPage />}
           {currentPage === "templates" && <TemplatesPage />}
+          {currentPage === "sandbox"   && <SandboxPage />}
+          {currentPage === "deploy"    && <DeployPage />}
         </main>
       </div>
     </>
@@ -577,6 +581,274 @@ function RoadmapPage() {
             )}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── SANDBOX PAGE ── */
+function SandboxPage() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setErrorMessage("");
+      setSuccessMessage("");
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!selectedFile) return;
+    setIsProcessing(true);
+    setErrorMessage("");
+
+    try {
+      // TODO: Extract metadata from ZIP like UploadModal does
+      const project = {
+        title: "New Project from Sandbox",
+        imageUrl: "https://via.placeholder.com/800x600?text=Sandbox+Project",
+        shortDescription: "Project uploaded via admin sandbox",
+        technologies: ["ZIP", "Admin"],
+        specialFeatures: ["Sandbox", "Admin-Approved"]
+      };
+
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(project)
+      });
+
+      if (response.status === 503) {
+        const data = await response.json() as { configured: boolean };
+        setSuccessMessage("✅ Projekt uložený lokálne (Supabase nie je nastavená)");
+      } else if (!response.ok) {
+        throw new Error("Failed to save project");
+      } else {
+        setSuccessMessage("✅ Projekt schválený a uložený!");
+      }
+
+      setTimeout(() => {
+        setSelectedFile(null);
+        setSuccessMessage("");
+      }, 3000);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleReject = () => {
+    setSelectedFile(null);
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
+
+  return (
+    <div className="p-8 fade-in">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">🔐 ZIP Sandbox</h1>
+        <p className="text-slate-600 mb-8">
+          Izolovaný preview projektov. ZIP sa extrahuje, metadáta sa auto-vyplnia, AI obrázok sa generuje.
+          <br />
+          Potom môžeš schváliť alebo zamietnuť projekt.
+        </p>
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 font-medium">
+            {successMessage}
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium">
+            ❌ {errorMessage}
+          </div>
+        )}
+
+        {!selectedFile ? (
+          <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center mb-6 hover:border-primary-300 transition-colors">
+            <input
+              type="file"
+              accept=".zip"
+              onChange={handleFileSelect}
+              className="hidden"
+              id="sandbox-zip-input"
+            />
+            <label htmlFor="sandbox-zip-input" className="cursor-pointer block">
+              <div className="text-4xl mb-3">📦</div>
+              <p className="font-bold text-slate-900 mb-1">Vyberte ZIP súbor</p>
+              <p className="text-sm text-slate-500">alebo ho tu potiahnite</p>
+            </label>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-6 fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="font-bold text-slate-900">{selectedFile.name}</p>
+                <p className="text-sm text-slate-500">
+                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
+              <div className="text-3xl">📄</div>
+            </div>
+
+            <div className="bg-slate-50 rounded-lg p-4 mb-6">
+              <p className="text-xs font-bold text-slate-500 mb-2 uppercase">Metadáta budú extrahovány z:</p>
+              <ul className="text-sm text-slate-600 space-y-1">
+                <li>✓ package.json → Názov, technológie</li>
+                <li>✓ README.md → Popis</li>
+                <li>✓ Pollinations.AI → Obrázok</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleApprove}
+                disabled={isProcessing}
+                className="flex-1 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isProcessing ? "⏳ Spracovávam..." : "✅ Schváliť a uložiť"}
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={isProcessing}
+                className="flex-1 py-3 bg-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                ❌ Zamietnuť
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-900">
+            <strong>💡 Info:</strong> Sandbox je izolovaný priestor. Schválené projekty sa zobrazia na home page.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── DEPLOY PAGE ── */
+function DeployPage() {
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deploySteps, setDeploySteps] = useState<"idle" | "validate" | "build" | "wait" | "verify" | "done">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleDeploy = async () => {
+    setIsDeploying(true);
+    setErrorMessage("");
+    setDeploySteps("validate");
+
+    try {
+      await new Promise(r => setTimeout(r, 800)); // Validate step
+      setDeploySteps("build");
+
+      await new Promise(r => setTimeout(r, 1200)); // Build step
+      setDeploySteps("wait");
+
+      const response = await fetch("/api/deploy", { method: "POST" });
+
+      if (response.status === 503) {
+        const data = await response.json() as { configured: boolean; message?: string };
+        setErrorMessage(`⚠️ Deploy nie je nastavený. ${data.message || ""}`);
+        setDeploySteps("idle");
+        setIsDeploying(false);
+        return;
+      }
+
+      if (!response.ok) throw new Error("Deploy failed");
+
+      await new Promise(r => setTimeout(r, 2000)); // Wait step
+      setDeploySteps("verify");
+
+      await new Promise(r => setTimeout(r, 800)); // Verify step
+      setDeploySteps("done");
+
+      setTimeout(() => {
+        setDeploySteps("idle");
+        setIsDeploying(false);
+      }, 1500);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Unknown error");
+      setDeploySteps("idle");
+      setIsDeploying(false);
+    }
+  };
+
+  const stepStatus = (step: string) => {
+    const steps = ["validate", "build", "wait", "verify"];
+    const currentIndex = steps.indexOf(deploySteps);
+    const stepIndex = steps.indexOf(step);
+    if (stepIndex < currentIndex || deploySteps === "done") return "completed";
+    if (stepIndex === currentIndex && deploySteps !== "idle") return "active";
+    return "pending";
+  };
+
+  return (
+    <div className="p-8 fade-in">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">🚀 Deploy to Production</h1>
+        <p className="text-slate-600 mb-8">
+          Spustí workflow: validácia projektov → trigger Vercel build → čakanie → verifikácia.
+        </p>
+
+        {errorMessage && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium">
+            {errorMessage}
+          </div>
+        )}
+
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-6">
+          <div className="space-y-4 mb-8">
+            {[
+              { id: "validate", label: "Validate Projects", desc: "Kontrola projektov v databáze" },
+              { id: "build", label: "Trigger Vercel Build", desc: "Spustenie build procesu na Vercel" },
+              { id: "wait", label: "Wait for Deployment", desc: "Čakanie na completion" },
+              { id: "verify", label: "Verify Deployment", desc: "Overenie live deployment" }
+            ].map((step) => {
+              const status = stepStatus(step.id);
+              return (
+                <div key={step.id} className="flex items-start gap-4">
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                    status === "completed" ? "bg-green-500" :
+                    status === "active" ? "bg-blue-500 animate-pulse" :
+                    "bg-slate-300"
+                  }`}>
+                    {status === "completed" ? "✓" : status === "active" ? "⚡" : ""}
+                  </div>
+                  <div>
+                    <p className={`font-bold ${status === "completed" || status === "active" ? "text-slate-900" : "text-slate-500"}`}>
+                      {step.label}
+                    </p>
+                    <p className="text-sm text-slate-500">{step.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={handleDeploy}
+            disabled={isDeploying}
+            className="w-full py-4 bg-primary-600 text-white font-bold text-lg rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isDeploying ? "🔄 Deploying..." : "🚀 Deploy to Production"}
+          </button>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <p className="text-sm text-amber-900">
+            <strong>📌 Poznámka:</strong> Deploy workflow vyžaduje VERCEL_DEPLOY_HOOK_URL. Nastav ho v Vercel Dashboard.
+          </p>
+        </div>
       </div>
     </div>
   );

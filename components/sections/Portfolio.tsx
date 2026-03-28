@@ -37,6 +37,27 @@ const Portfolio = () => {
     } catch {}
   }, [projects]);
 
+  // Fetch projects from API (Supabase if configured, else empty)
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("/api/projects");
+        const data = (await response.json()) as Project[];
+        // If API returns projects, prepend sampleProject + add API projects
+        if (data.length > 0) {
+          setProjects((prev) => {
+            const hasProjects = prev.some((p) => p.title.includes("SecureVault"));
+            return hasProjects ? [...prev, ...data] : [prev[0], ...data];
+          });
+        }
+      } catch (err) {
+        // API error or offline — fallback to localStorage (already set in initial state)
+        console.log("Portfolio: API fetch skipped, using localStorage");
+      }
+    };
+    fetchProjects();
+  }, []);
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
   };
