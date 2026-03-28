@@ -1,0 +1,8 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /_next/static/
+Disallow: /_next/image/
+
+# Sitemaps
+Sitemap: https://magicasro.cloud/sitemap.xml

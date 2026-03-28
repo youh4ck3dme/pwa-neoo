@@ -1,0 +1,23 @@
+{
+  "name": "MA.GI.CA — Enterprise PWA Engineering & Cybersecurity",
+  "short_name": "MA.GI.CA",
+  "description": "Produkčné PWA aplikácie a kybernetická bezpečnosť pre najnáročnejších klientov.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fcfcfc",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

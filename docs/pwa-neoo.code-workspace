@@ -1,0 +1,12 @@
+{
+    "extensions": {
+        "recommendations": [
+            "anthropic.claude-code"
+        ]
+    },
+    "folders": [
+        {
+            "path": ".."
+        }
+    ]
+}
