@@ -27,7 +27,7 @@ const widgetsData: Record<WidgetTabId, WidgetCategory> = {
       { name: "LottieFiles", desc: "Namiesto ťažkých GIFov. Stiahneš si vektorovú animáciu (zadarmo), hodíš na web a máš profi animovanú ilustráciu bez straty kvality.", tags: ["Illustrations", "Lightweight"], url: "https://lottiefiles.com/" },
       { name: "GSAP (ScrollTrigger)", desc: "Štandard pre weby ocenené na Awwwards. Keď scrolluješ a veci sa lepia, točia a menia veľkosť podľa tvojho kolieska myši, je to GSAP.", tags: ["Scroll", "Awards", "Pro"], url: "https://gsap.com/scroll/" },
       { name: "Aceternity UI", desc: "Chceš urobiť web pre AI startup? Zober si ich 'Tracing Beam' (čiara, ktorá nasleduje scroll) alebo 'Meteors' efekt na pozadie.", tags: ["AI Style", "Tailwind"], url: "https://ui.aceternity.com/" },
-      { name: "Particles.js / tsParticles", desc: "Klasika, ktorá nikdy nesklame. Pridá ti na pozadie pohybujúce sa častice, ktoré reagujú na myš. Vhodné pre Krypto/Tech weby.", tags: ["Background", "Tech"], url: "https://particles.js.org/" },
+      { name: "Particles.js / tsParticles", desc: "Klasika, ktorá nikdy nesklame. Pridá ti na pozadie pohybujúce sa častice, ktoré reagujú na myš. Vhodné pre Krypto/Tech weby.", tags: ["Background", "Tech"], url: "https://tsparticles.github.io/tsparticles/" },
       { name: "Typed.js", desc: "Efekt písacieho stroja. Ideálne na úvodnú stránku (Hero section), kde sa mení text: 'Vytvárame weby pre [Reštaurácie / Startupy / E-shopy]'.", tags: ["Text", "Typing"], url: "https://mattboldt.com/demos/typed-js/" },
       { name: "Hover.css", desc: "Kolekcia CSS3 efektov pre tlačidlá a odkazy. Stiahneš triedu, pridáš na button a ten pri hoveri zaiskrí, zatrasie sa alebo preblikne.", tags: ["CSS", "Buttons"], url: "https://ianlunn.github.io/Hover/" },
       { name: "React Three Fiber", desc: "Ak chceš byť boh. 3D modely priamo vo webe (napríklad rotujúce tenisky alebo auto). Zložitejšie, ale predáš to za majland.", tags: ["3D", "WebGL", "React"], url: "https://docs.pmnd.rs/react-three-fiber" },
@@ -76,7 +76,7 @@ const widgetsData: Record<WidgetTabId, WidgetCategory> = {
       { name: "React-Share", desc: "Tlačidlá na zdieľanie na FB, X, LinkedIn, WhatsApp... Vyriešené na 1 import s počítadlami zdieľaní.", tags: ["Social", "Buttons"], url: "https://github.com/nygardk/react-share" },
       { name: "Disqus", desc: "Klasika pre komentáre, ak Giscus nevyhovuje. Má free tier (s reklamami), ale na základné blogy je to bezbolestný setup.", tags: ["Comments", "Classic"], url: "https://disqus.com/" },
       { name: "CountUp.js", desc: "Zákazník chce sekciu s číslami: '1500 spokojných klientov'. Namiesto nudného textu použi toto a číslo sa po nascrollovaní 'natočí' od nuly do 1500.", tags: ["Stats", "Animation"], url: "https://inorganik.github.io/countUp.js/" },
-      { name: "Trustpilot Widget", desc: "Ak má klient profil na Trustpilote, použi ich free widget a natiahni mu hviezdičky priamo do hlavičky webu.", tags: ["Trust", "Reviews"], url: "https://support.trustpilot.com/hc/en-us/articles/201726696" },
+      { name: "Trustpilot Widget", desc: "Ak má klient profil na Trustpilote, použi ich free widget a natiahni mu hviezdičky priamo do hlavičky webu.", tags: ["Trust", "Reviews"], url: "https://support.trustpilot.com/hc/en-us/articles/201726696-TrustBox-widgets-Trustpilot-s-website-widgets" },
       { name: "Flowise AI", desc: "Nástroj na drag&drop budovanie AI botov (LangChain). Zostroj si vlastného GPT bota na firemných dátach klienta a vlož na web.", tags: ["AI", "LangChain"], url: "https://flowiseai.com/" },
       { name: "Buy Me a Coffee", desc: "Ak staviaš malý free nástroj a chceš, aby ti ľudia mohli hodiť 5€ na kávu. Ikonický žltý widget.", tags: ["Monetization", "Creator"], url: "https://buymeacoffee.com/" },
     ],
@@ -88,7 +88,7 @@ const widgetsData: Record<WidgetTabId, WidgetCategory> = {
       { name: "Leaflet.js", desc: "Zabudni na platené Google Mapy (ktoré pýtajú od klientov kreditku). Leaflet s OpenStreetMap je 100% zadarmo, interaktívny a krásny.", tags: ["Maps", "Free", "Alternative"], url: "https://leafletjs.com/" },
       { name: "Plausible Analytics", desc: "Klienti neznášajú zložité Google Analytics a otravné Cookie bannery. Plausible nevyžaduje cookies (privacy friendly) a štatistiky sú jasné.", tags: ["Analytics", "Privacy"], url: "https://plausible.io/" },
       { name: "Chart.js / Recharts", desc: "Musíš spraviť graf tržieb alebo vývoja hmotnosti do appky? Tieto dve knižnice sú zadarmo, responzívne a vyzerajú profi.", tags: ["Charts", "Data"], url: "https://www.chartjs.org/" },
-      { name: "NProgress", desc: "Tá tenučká modrá čiara, ktorá beží na vrchu obrazovky, keď sa načíta ďalšia podstránka (ako to má YouTube). Brutálne to zlepšuje pocit z rýchlosti.", tags: ["Loading", "UX"], url: "https://ricostacruz.com/nprogress/" },
+      { name: "NProgress", desc: "Tá tenučká modrá čiara, ktorá beží na vrchu obrazovky, keď sa načíta ďalšia podstránka (ako to má YouTube). Brutálne to zlepšuje pocit z rýchlosti.", tags: ["Loading", "UX"], url: "https://github.com/rstacruz/nprogress" },
       { name: "Tippy.js", desc: "Najlepšie Tooltipy (malé bubliny s nápovedou, keď prejdeš myšou cez ikonku). Extrémne prispôsobiteľné.", tags: ["Tooltips", "Help"], url: "https://atomiks.github.io/tippyjs/" },
       { name: "QRCode.js / qrcode.react", desc: "Klient chce z webu tlačiť letáky? Vygeneruj mu QR kód dynamicky priamo v prehliadači.", tags: ["QR", "Print"], url: "https://github.com/zpao/qrcode.react" },
       { name: "PostHog", desc: "Analytika pre appky. Umožní ti nahrať si obrazovku (Session replay), ako sa užívatelia správajú vo vnútri tvojej aplikácie. Free tier je super.", tags: ["Analytics", "Replay"], url: "https://posthog.com/" },
@@ -98,6 +98,99 @@ const widgetsData: Record<WidgetTabId, WidgetCategory> = {
     ],
   },
 };
+
+// ── TOOLS DATA (Real Free Stack) ──
+const toolsData = {
+  hosting: { title: "🚀 Hosting & Deploy", items: [
+    { name: "Vercel", desc: "Next.js deploy na 1 click, 100 GB free, najrýchlejší," , url: "https://vercel.com" },
+    { name: "Railway", desc: "Full-stack deploy + DB v jednom, $5 free credit mesačne", url: "https://railway.app" },
+    { name: "Render", desc: "Static + backend, free tier s PostgreSQL databázou", url: "https://render.com" },
+    { name: "Cloudflare Pages", desc: "Najrýchlejší CDN zadarmo, unlimited bandwidth", url: "https://pages.cloudflare.com" },
+    { name: "Netlify", desc: "Forms + Functions zadarmo, intuívny deploy", url: "https://netlify.com" },
+  ]},
+  database: { title: "🗄️ Databázy (free tier)", items: [
+    { name: "Supabase", desc: "Postgres + Auth + Storage zadarmo, 500MB", url: "https://supabase.com" },
+    { name: "Neon", desc: "Serverless Postgres, Git-style branching databáz", url: "https://neon.tech" },
+    { name: "Turso", desc: "SQLite na edge, 9GB free, replikácia", url: "https://turso.tech" },
+    { name: "MongoDB Atlas", desc: "512MB free cluster, auto-scaling", url: "https://www.mongodb.com/atlas" },
+    { name: "PlanetScale", desc: "MySQL s branching, dev branches zadarmo", url: "https://planetscale.com" },
+  ]},
+  auth: { title: "🔐 Auth & Bezpečnosť", items: [
+    { name: "Clerk", desc: "Najkrajší login UI, 10 000 MAU zadarmo, social logins", url: "https://clerk.com" },
+    { name: "NextAuth.js", desc: "Self-hosted auth pre Next.js, open-source", url: "https://next-auth.js.org" },
+    { name: "Auth0", desc: "7 500 MAU zadarmo, 30+ integrácií", url: "https://auth0.com" },
+    { name: "Lucia", desc: "Lightweight auth library, full control, session-based", url: "https://lucia-auth.com" },
+    { name: "Better Auth", desc: "Nový štandard 2025, best-in-class DX", url: "https://www.better-auth.com" },
+  ]},
+  design: { title: "🎨 Design, Ikony & Assets", items: [
+    { name: "Lucide Icons", desc: "1000+ SVG ikon, React ready, consistency", url: "https://lucide.dev" },
+    { name: "Heroicons", desc: "292 ikoniek od Tailwind Labs, 2 štýly", url: "https://heroicons.com" },
+    { name: "Phosphor Icons", desc: "6000+ ikon, 6 štýlov, pixel-perfect", url: "https://phosphoricons.com" },
+    { name: "Unsplash", desc: "Free stock fotky, API aj web interface", url: "https://unsplash.com" },
+    { name: "Pexels", desc: "Alternatíva k Unsplash, 100 000+ fotiek", url: "https://www.pexels.com" },
+  ]},
+  cms: { title: "📦 CMS & Obsah", items: [
+    { name: "Sanity.io", desc: "Headless CMS, 200k API calls zadarmo, powerful", url: "https://www.sanity.io" },
+    { name: "Contentful", desc: "Free tier 5 users, 50k records, GraphQL ready", url: "https://www.contentful.com" },
+    { name: "Payload CMS", desc: "Open-source, self-hosted, built s TypeScript", url: "https://payloadcms.com" },
+    { name: "Notion API", desc: "Použi Notion ako CMS cez API", url: "https://developers.notion.com" },
+    { name: "MDX / next-mdx-remote", desc: "Markdown s React komponentami ako CMS", url: "https://github.com/hashicorp/next-mdx-remote" },
+  ]},
+};
+
+// ── TEMPLATES DATA ──
+const templatesData = {
+  starters: { title: "🏗️ Starter Kits (hotové projekty)", items: [
+    { name: "Vercel Templates", desc: "200+ Next.js šablón, gotové na produkciu", url: "https://vercel.com/templates" },
+    { name: "Create T3 App", desc: "Next.js + tRPC + Prisma + Tailwind, best practices", url: "https://create.t3.gg" },
+    { name: "Shadcn/ui Examples", desc: "Admin dashboard, mail app, music player", url: "https://ui.shadcn.com/examples" },
+    { name: "Next.js Commerce", desc: "E-commerce starter od Verelu", url: "https://github.com/vercel/commerce" },
+    { name: "Taxonomy (shadcn)", desc: "Blog + Dashboard starter s autentifikáciou", url: "https://tx.shadcn.com" },
+  ]},
+  design: { title: "🎨 Figma & Design Kits (zadarmo)", items: [
+    { name: "Figma Community", desc: "10 000+ free UI kits a šablón", url: "https://www.figma.com/community" },
+    { name: "Untitled UI", desc: "Najlepší free Figma UI kit, premium kvalita", url: "https://www.untitledui.com" },
+    { name: "Shadcn/ui", desc: "Copy-paste React komponenty, Tailwind + Radix", url: "https://ui.shadcn.com" },
+    { name: "DaisyUI", desc: "Tailwind component library, 400+ komponentov", url: "https://daisyui.com" },
+    { name: "Flowbase", desc: "Webflow UI kit templates, paid+free", url: "https://www.flowbase.co" },
+  ]},
+  landing: { title: "📄 Landing Page Šablóny", items: [
+    { name: "Cruip", desc: "Profi SaaS šablóny, free + premium sekcie", url: "https://cruip.com" },
+    { name: "HyperUI", desc: "100+ free Tailwind komponenty na copy-paste", url: "https://www.hyperui.dev" },
+    { name: "Preline UI", desc: "Free Tailwind UI komponenty, produksné ready", url: "https://preline.co" },
+    { name: "Flowrift", desc: "Copy-paste Tailwind sekcie na landing pages", url: "https://flowrift.com" },
+    { name: "Tailwind UI Components", desc: "Premium-quality komponenty (free previews)", url: "https://tailwindui.com/components" },
+  ]},
+  ecommerce: { title: "🛒 E-commerce & Biznis", items: [
+    { name: "Medusa.js", desc: "Open-source Shopify alternative, API-first", url: "https://medusajs.com" },
+    { name: "Saleor", desc: "GraphQL e-commerce platform, open-source", url: "https://saleor.io" },
+    { name: "Shopify Hydrogen", desc: "Headless Shopify, React + Remix framework", url: "https://hydrogen.shopify.dev" },
+    { name: "WooCommerce", desc: "WordPress e-commerce plugin, najrozšírenejší", url: "https://woocommerce.com" },
+    { name: "OpenCart", desc: "Classic free e-commerce, self-hosted", url: "https://www.opencart.com" },
+  ]},
+};
+
+// ── ROADMAP DATA ──
+const roadmapPhases = [
+  { phase: 1, title: "Začínam (0–1 000€/mes)", color: "bg-red-500", emoji: "🌱", items: [
+    "Zostav portfólio (5–10 projektov)",
+    "Nastav LinkedIn + Behance",
+    "Prvé zákazky na Toptal/Upwork",
+    "Cena: 15–25€/hod",
+  ]},
+  { phase: 2, title: "Rast (1 000–3 000€/mes)", color: "bg-yellow-500", emoji: "📈", items: [
+    "Vyber niku (reštaurácie, real estate, SaaS)",
+    "Zvýš cenu na 40–70€/hod",
+    "Referral systém (10% provízia)",
+    "Vlastné produkty (šablóny, snippety)",
+  ]},
+  { phase: 3, title: "Pro (3 000+€/mes)", color: "bg-green-500", emoji: "🚀", items: [
+    "Retainer zmluvy (pevná mesačná platba)",
+    "Mini agentúra / subcontractori",
+    "SaaS produkt alebo digitálny produkt",
+    "Cena: 100+€/hod alebo 2k–10k€/projekt",
+  ]},
+];
 
 const tabConfig: Record<WidgetTabId, { label: string; emoji: string; topBar: string; titleHover: string; btnHover: string }> = {
   wow:        { label: "Wow Animácie",      emoji: "✨", topBar: "bg-fuchsia-500", titleHover: "group-hover:text-fuchsia-600", btnHover: "hover:border-fuchsia-400 hover:bg-fuchsia-50 hover:text-fuchsia-700" },
@@ -207,10 +300,10 @@ export default function AdminPage() {
         {/* ── MAIN CONTENT ── */}
         <main className="flex-1 overflow-y-auto">
           {currentPage === "widgets"   && <WidgetsPage activeTab={activeWidgetTab} setActiveTab={setActiveWidgetTab} />}
-          {currentPage === "dashboard" && <PlaceholderPage title="🔥 Prehľad '26" subtitle="Tvoj freelance dashboard príde čoskoro." />}
-          {currentPage === "roadmap"   && <PlaceholderPage title="📍 Master Roadmapa" subtitle="Krok za krokom k prvým €1000/mesiac." />}
-          {currentPage === "tools"     && <PlaceholderPage title="🧰 Real Free Stack" subtitle="Najlepšie free nástroje pre freelancerov." />}
-          {currentPage === "templates" && <PlaceholderPage title="📦 Top 50 Šablón" subtitle="Hotové šablóny na okamžité spustenie." />}
+          {currentPage === "dashboard" && <DashboardPage />}
+          {currentPage === "roadmap"   && <RoadmapPage />}
+          {currentPage === "tools"     && <ToolsPage />}
+          {currentPage === "templates" && <TemplatesPage />}
         </main>
       </div>
     </>
@@ -329,15 +422,134 @@ function WidgetCard({ item, index, tabCfg }: { item: WidgetItem; index: number; 
   );
 }
 
-/* ── PLACEHOLDER PAGES ── */
-function PlaceholderPage({ title, subtitle }: { title: string; subtitle: string }) {
+/* ── DASHBOARD PAGE ── */
+function DashboardPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-8 fade-in">
-      <div className="text-center max-w-md">
-        <div className="text-6xl mb-4">{title.split(" ")[0]}</div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">{title.slice(3)}</h2>
-        <p className="text-slate-500">{subtitle}</p>
-        <p className="mt-4 text-sm text-slate-400">Prejdi na <strong>Top 50 Widgetov</strong> v ľavom menu.</p>
+    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
+      <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-8">🔥 Prehľad '26</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <h3 className="font-bold text-slate-600 text-sm mb-2 uppercase">Tvojich Projektov</h3>
+          <p className="text-4xl font-extrabold text-slate-900">∞</p>
+          <p className="text-xs text-slate-400 mt-1">Skrz všetky platformy</p>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <h3 className="font-bold text-slate-600 text-sm mb-2 uppercase">Tento Mesiac</h3>
+          <p className="text-4xl font-extrabold text-emerald-600">↑ 15%</p>
+          <p className="text-xs text-slate-400 mt-1">Rast oproti predchádzajúcemu mesiacu</p>
+        </div>
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <h3 className="font-bold text-slate-600 text-sm mb-2 uppercase">Tvojich Nástrojov</h3>
+          <p className="text-4xl font-extrabold text-purple-600">50+</p>
+          <p className="text-xs text-slate-400 mt-1">Dostupný v admin sekcii</p>
+        </div>
+      </div>
+      <div className="mt-10 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 border border-purple-200">
+        <h3 className="text-xl font-bold text-slate-900 mb-2">💡 Tip</h3>
+        <p className="text-slate-600">Naviguj na <strong>Real Free Stack</strong> aby si videl všetky free nástroje na hosting, databázy a auth. <strong>Master Roadmapa</strong> ťa naučí ako zarobiť 3000€+/mesiac.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ── TOOLS PAGE ── */
+function ToolsPage() {
+  return (
+    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
+      <div className="space-y-3 mb-10">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">Real Free Stack</h2>
+        <p className="text-lg text-slate-600 max-w-3xl">Všetko čo potrebuješ na buildup produkčných aplikácií bez minimálnych nákladov.</p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {Object.entries(toolsData).map(([key, category]) => (
+          <div key={key} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">{category.title}</h3>
+            <div className="space-y-3">
+              {category.items.map((tool: any) => (
+                <a
+                  key={tool.name}
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-purple-400 hover:bg-purple-50 transition-all group"
+                >
+                  <h4 className="font-bold text-slate-900 group-hover:text-purple-700 transition-colors">{tool.name}</h4>
+                  <p className="text-sm text-slate-500 group-hover:text-slate-700 mt-1">{tool.desc}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── TEMPLATES PAGE ── */
+function TemplatesPage() {
+  return (
+    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
+      <div className="space-y-3 mb-10">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">Top 50 Šablón</h2>
+        <p className="text-lg text-slate-600 max-w-3xl">Hotové startéry, UI kity a dizajn šablóny na okamžité spustenie.</p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {Object.entries(templatesData).map(([key, category]) => (
+          <div key={key} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+            <h3 className="text-xl font-bold text-slate-900 mb-4">{category.title}</h3>
+            <div className="space-y-3">
+              {category.items.map((template: any) => (
+                <a
+                  key={template.name}
+                  href={template.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all group"
+                >
+                  <h4 className="font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{template.name}</h4>
+                  <p className="text-sm text-slate-500 group-hover:text-slate-700 mt-1">{template.desc}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── ROADMAP PAGE ── */
+function RoadmapPage() {
+  return (
+    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
+      <div className="space-y-3 mb-12">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">Master Roadmapa</h2>
+        <p className="text-lg text-slate-600 max-w-3xl">Tvoj 3-fázový plán na cestu k €3000+/mesiac.</p>
+      </div>
+      <div className="space-y-6">
+        {roadmapPhases.map((phase, idx) => (
+          <div key={phase.phase} className="relative">
+            <div className={`${phase.color} rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl shadow-lg mx-auto mb-4`}>
+              {phase.emoji}
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">{phase.title}</h3>
+              <ul className="space-y-2">
+                {phase.items.map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-600">
+                    <span className="text-primary-600 font-bold mt-0.5">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {idx < roadmapPhases.length - 1 && (
+              <div className="flex justify-center my-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-slate-300 to-transparent" />
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
