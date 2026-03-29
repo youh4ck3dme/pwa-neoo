@@ -24,7 +24,7 @@ const ProPage = () => {
           className="absolute inset-0 z-0"
         >
           <img 
-            src="/C:/Users/42195/.gemini/antigravity/brain/e4ddb9d9-ea98-4fc4-baa0-8efe3faf4d66/pro_institutional_storyweb_hero_1774658002868.png" 
+            src="/images/pro-hero.png" 
             alt="Pro Hero" 
             className="w-full h-full object-cover"
           />

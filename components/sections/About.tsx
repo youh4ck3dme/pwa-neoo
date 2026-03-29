@@ -1,4 +1,6 @@
 import React from "react";
+import Image from "next/image";
+import { Cpu } from "lucide-react";
 
 const About = () => {
   return (
@@ -35,13 +37,13 @@ const About = () => {
           
           <div className="relative order-1 lg:order-2">
             <div className="absolute -inset-4 bg-primary-100/30 rounded-[2.5rem] rotate-3 -z-10"></div>
-            <img src="https://images.pexels.com/photos/374559/pexels-photo-374559.jpeg"
-                 alt="AI Research" className="rounded-[7px] shadow-2xl w-full object-cover aspect-[4/3]" />
+            <Image src="https://images.pexels.com/photos/374559/pexels-photo-374559.jpeg"
+                 alt="AI Research" width={800} height={600} className="rounded-[7px] shadow-2xl w-full object-cover aspect-[4/3]" />
             
             <div className="absolute -bottom-10 -right-6 lg:-right-10 bg-white p-8 rounded-[7px] shadow-2xl border border-slate-100 animate-float">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-accent-50 text-accent-600 rounded-[7px] flex items-center justify-center text-3xl">
-                  <i className="fas fa-microchip"></i>
+                  <Cpu size={28} />
                 </div>
                 <div>
                   <p className="font-extrabold text-slate-900 text-xl">Future-Ready</p>

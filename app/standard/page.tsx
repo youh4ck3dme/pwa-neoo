@@ -24,7 +24,7 @@ const StandardPage = () => {
           className="absolute inset-0 z-0"
         >
           <img 
-            src="/C:/Users/42195/.gemini/antigravity/brain/e4ddb9d9-ea98-4fc4-baa0-8efe3faf4d66/standard_web_storyweb_hero_1774657984179.png" 
+            src="/images/standard-hero.png" 
             alt="Standard Hero" 
             className="w-full h-full object-cover"
           />

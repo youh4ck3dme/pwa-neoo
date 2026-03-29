@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface Project {
   title: string;
@@ -12,7 +13,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
   return (
     <article className="bg-white rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden hover:translate-y-[-4px] transition-transform duration-300">
       <div className="relative">
-        <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />
+        <Image src={project.imageUrl} alt={project.title} width={800} height={450} loading="lazy" className="w-full h-48 object-cover" />
         <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-bold text-primary-600 shadow-sm border border-primary-100">
           AI Verified
         </div>

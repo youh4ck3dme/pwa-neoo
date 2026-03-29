@@ -23,7 +23,7 @@ describe('Hero Section', () => {
 
   it('renders hero image with correct alt text', () => {
     render(<Hero />)
-    const img = screen.getByAltText(/MA.GI.CA Premium Interface/i)
+    const img = screen.getByAltText(/MA.GI.CA Enterprise PWA Interface/i)
     expect(img).toBeInTheDocument()
     expect(img).toHaveAttribute('src', '/hero.png')
   })

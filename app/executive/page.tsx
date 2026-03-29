@@ -24,7 +24,7 @@ const ExecutivePage = () => {
           className="absolute inset-0 z-0 scale-110"
         >
           <img 
-            src="/C:/Users/42195/.gemini/antigravity/brain/e4ddb9d9-ea98-4fc4-baa0-8efe3faf4d66/executive_government_storyweb_hero_1774658018590.png" 
+            src="/images/executive-hero.png" 
             alt="Executive Hero" 
             className="w-full h-full object-cover grayscale opacity-50"
           />

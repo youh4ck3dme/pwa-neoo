@@ -34,7 +34,17 @@ const Portfolio = () => {
   useEffect(() => {
     try {
       localStorage.setItem("magica-portfolio-projects", JSON.stringify(projects));
-    } catch {}
+    } catch (e) {
+      if (e instanceof DOMException && (e.code === 22 || e.name === "QuotaExceededError")) {
+        console.warn("[Portfolio] localStorage quota exceeded, clearing old data and retrying...");
+        try {
+          localStorage.removeItem("magica-portfolio-projects");
+          localStorage.setItem("magica-portfolio-projects", JSON.stringify(projects));
+        } catch {
+          console.error("[Portfolio] Failed to save projects even after clearing storage.");
+        }
+      }
+    }
   }, [projects]);
 
   // Fetch projects from API (Supabase if configured, else empty)

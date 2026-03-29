@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const Hero = () => {
   return (
@@ -34,8 +35,9 @@ const Hero = () => {
 
         <div className="mt-20 relative max-w-5xl mx-auto">
           <div className="absolute inset-0 bg-gradient-to-t from-[#fcfcfc] via-transparent to-transparent z-10"></div>
-          <img src="/hero.png" 
-               alt="MA.GI.CA Enterprise PWA Interface Showcase - Secure Cyber Infrastructure" 
+          <Image src="/hero.png"
+               alt="MA.GI.CA Enterprise PWA Interface Showcase - Secure Cyber Infrastructure"
+               width={1200} height={675} priority
                className="rounded-[2.5rem] shadow-2xl border border-white/20 opacity-100 hover:scale-[1.01] transition-transform duration-700" />
         </div>
       </div>

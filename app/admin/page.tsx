@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type PageId = "dashboard" | "roadmap" | "tools" | "templates" | "widgets" | "sandbox" | "deploy";
 type WidgetTabId = "wow" | "conversion" | "data" | "community" | "utils";
@@ -241,6 +241,11 @@ export default function AdminPage() {
   const [currentPage, setCurrentPage] = useState<PageId>("widgets");
   const [activeWidgetTab, setActiveWidgetTab] = useState<WidgetTabId>("wow");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Auto-close mobile menu on page change (Issue #7)
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [currentPage]);
 
   return (
     <>

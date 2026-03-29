@@ -11,6 +11,27 @@ const generateAiImageUrl = (title: string, technologies: string[], description: 
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=600&seed=${seed}&nologo=true&enhance=true`;
 };
 
+const FALLBACK_IMAGE = "https://via.placeholder.com/800x600?text=Preview+Unavailable";
+
+const checkImageAvailable = async (url: string, maxRetries = 3): Promise<string> => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(url, { method: "HEAD", signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) return url;
+    } catch {
+      // Retry on network error or timeout
+    }
+    if (i < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 1500));
+    }
+  }
+  console.warn("[UploadModal] AI image not available after retries, using fallback.");
+  return FALLBACK_IMAGE;
+};
+
 interface Project {
   title: string;
   imageUrl: string;
@@ -84,11 +105,12 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
         setShortDescription(extractedDesc);
         setTechnologies(extractedTechs.join(", "));
 
-        // Generate AI image
+        // Generate AI image with retry logic
         setIsGeneratingImage(true);
         setStatusMsg("Generujem AI obrázok...");
         const aiUrl = generateAiImageUrl(extractedTitle, extractedTechs, extractedDesc);
-        setImageUrl(aiUrl);
+        const validUrl = await checkImageAvailable(aiUrl);
+        setImageUrl(validUrl);
         setIsGeneratingImage(false);
 
         setStage("form");
@@ -101,6 +123,15 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
     };
 
     extractMetadata();
+  }, [file]);
+
+  // Reset stale state when file changes (Issue #4: Modal State Persistence Bug)
+  useEffect(() => {
+    setPasswordError(false);
+    setPassword("");
+    setSuccessState(false);
+    setIsSubmitting(false);
+    setErrorMsg("");
   }, [file]);
 
   const handleSubmit = async (e: React.FormEvent) => {

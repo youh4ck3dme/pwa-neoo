@@ -4,23 +4,23 @@
  * POST: Save new project (to Supabase if configured, else returns 503)
  */
 
+import { supabase } from '@/lib/supabase';
+
 export async function GET() {
   try {
     // If Supabase is not configured, return empty array
     // Portfolio component will fallback to localStorage
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    if (!supabase) {
       return Response.json([]);
     }
 
-    // TODO: When Supabase is configured, fetch from DB
-    // const { data, error } = await supabase
-    //   .from('projects')
-    //   .select('*')
-    //   .order('created_at', { ascending: false })
-    // if (error) throw error
-    // return Response.json(data ?? [])
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('createdAt', { ascending: false });
 
-    return Response.json([]);
+    if (error) throw error;
+    return Response.json(data ?? []);
   } catch (error) {
     console.error('GET /api/projects error:', error);
     return Response.json(
@@ -54,16 +54,21 @@ export async function POST(req: Request) {
       );
     }
 
-    // TODO: When Supabase is configured, insert into DB
-    // const { data, error } = await supabaseAdmin
-    //   .from('projects')
-    //   .insert(project)
-    //   .select()
-    //   .single()
-    // if (error) throw error
-    // return Response.json(data, { status: 201 })
+    // Use service key for server-side insertion
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
 
-    return Response.json(project, { status: 201 });
+    const { data, error } = await supabaseAdmin
+      .from('projects')
+      .insert(project)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return Response.json(data, { status: 201 });
   } catch (error) {
     console.error('POST /api/projects error:', error);
     return Response.json(

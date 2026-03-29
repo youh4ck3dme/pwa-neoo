@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { Phone, Mail, Loader2 } from "lucide-react";
 
 const Contact = () => {
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -27,7 +28,7 @@ const Contact = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div className="flex items-center gap-5 group">
                 <div className="w-16 h-16 bg-slate-800 text-primary-50 rounded-[7px] flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
-                  <i className="fas fa-phone"></i>
+                  <Phone size={24} />
                 </div>
                 <div>
                   <h4 className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-1">Zavolajte nám</h4>
@@ -37,7 +38,7 @@ const Contact = () => {
 
               <div className="flex items-center gap-5 group">
                 <div className="w-16 h-16 bg-slate-800 text-primary-50 rounded-[7px] flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
-                  <i className="fas fa-envelope"></i>
+                  <Mail size={24} />
                 </div>
                 <div>
                   <h4 className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-1">Napíšte nám</h4>
@@ -61,7 +62,7 @@ const Contact = () => {
                   className={`w-full py-5 rounded-[7px] text-lg font-bold transition-all ${formStatus === "success" ? "bg-green-500" : "bg-slate-900 hover:bg-primary-600"} text-white`}
                 >
                   {formStatus === "idle" && "Odoslať dopyt"}
-                  {formStatus === "loading" && <i className="fas fa-spinner fa-spin mr-2"></i>}
+                  {formStatus === "loading" && <Loader2 size={20} className="animate-spin inline mr-2" />}
                   {formStatus === "success" && "Odoslané!"}
                 </button>
               </form>
