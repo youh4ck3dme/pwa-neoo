@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 
 import PWA from "@/components/PWA";
+import NotificationPrompt from "@/components/ui/NotificationPrompt";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -173,6 +174,7 @@ export default function RootLayout({
       <body className={`${outfit.variable} font-body antialiased bg-[#fcfcfc] mesh-gradient`}>
         <PWA />
         {children}
+        <NotificationPrompt />
       </body>
     </html>
   );

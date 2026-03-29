@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { canInstall, install } = usePWAInstall();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,10 +31,28 @@ const Navbar = () => {
             <a href="#ako-to-funguje" className="text-sm font-semibold text-slate-600 hover:text-primary-600 transition-colors">Proces</a>
             <a href="#enterprise-packages" className="text-sm font-semibold text-slate-600 hover:text-primary-600 transition-colors">Enterprise</a>
             <a href="#portfolio" className="text-sm font-semibold text-slate-600 hover:text-primary-600 transition-colors">Portfólio</a>
+
+            {canInstall && (
+              <button
+                onClick={install}
+                className="px-4 py-2 text-sm font-bold text-primary-600 border border-primary-200 rounded-[7px] hover:bg-primary-50 hover:border-primary-400 transition-all flex items-center gap-1.5"
+              >
+                📲 Inštalovať
+              </button>
+            )}
+
             <a href="#kontakt" className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-[7px] hover:bg-primary-600 transition-all shadow-lg hover:shadow-primary-500/20">Kontakt</a>
           </nav>
 
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-2">
+            {canInstall && (
+              <button
+                onClick={install}
+                className="px-3 py-1.5 text-xs font-bold text-primary-600 border border-primary-200 rounded-lg hover:bg-primary-50 transition-all"
+              >
+                📲
+              </button>
+            )}
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-600 hover:text-primary-600 focus:outline-none p-2">
               <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars-staggered'} text-2xl`}></i>
             </button>
@@ -48,6 +68,16 @@ const Navbar = () => {
             <a href="#ako-to-funguje" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-semibold text-slate-900 hover:text-primary-600">Proces</a>
             <a href="#enterprise-packages" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-semibold text-slate-900 hover:text-primary-600">Enterprise</a>
             <a href="#portfolio" onClick={() => setIsMobileMenuOpen(false)} className="block text-lg font-semibold text-slate-900 hover:text-primary-600">Portfólio</a>
+
+            {canInstall && (
+              <button
+                onClick={() => { install(); setIsMobileMenuOpen(false); }}
+                className="block w-full text-center py-3 bg-primary-50 text-primary-700 font-bold rounded-[7px] border border-primary-200"
+              >
+                📲 Inštalovať aplikáciu
+              </button>
+            )}
+
             <a href="#kontakt" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center py-4 bg-primary-600 text-white font-bold rounded-[7px]">Kontaktujte nás</a>
           </div>
         </div>

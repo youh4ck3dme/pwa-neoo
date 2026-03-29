@@ -1,13 +1,13 @@
 // ═══════════════════════════════════════════════════════════
-// MA.GI.CA Enterprise PWA — Service Worker v3
+// MA.GI.CA Enterprise PWA — Service Worker v4
 // Cache strategies: Cache-First, Network-First, SWR, Network-Only
 // Features: Background Sync, Push Notifications, Offline Fallback
 // ═══════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'magica-pwa-v3';
-const STATIC_CACHE = 'magica-static-v3';
-const PAGES_CACHE = 'magica-pages-v3';
-const RUNTIME_CACHE = 'magica-runtime-v3';
+const CACHE_NAME = 'magica-pwa-v4';
+const STATIC_CACHE = 'magica-static-v4';
+const PAGES_CACHE = 'magica-pages-v4';
+const RUNTIME_CACHE = 'magica-runtime-v4';
 
 // ── Assets to pre-cache on install ──
 const PRECACHE_ASSETS = [
@@ -21,6 +21,9 @@ const PRECACHE_ASSETS = [
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   '/hero.png',
+  '/images/standard-hero.png',
+  '/images/pro-hero.png',
+  '/images/executive-hero.png',
 ];
 
 // ── INSTALL ──
