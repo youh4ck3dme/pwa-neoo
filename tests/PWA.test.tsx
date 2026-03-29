@@ -23,26 +23,24 @@ describe('PWA & Asset Integrity', () => {
   })
 
   it('PWA component attempts to register service worker', async () => {
-    // Mock serviceWorker API
-    const registerMock = vi.fn().mockResolvedValue({ scope: '/' })
-    const getRegistrationsMock = vi.fn().mockResolvedValue([])
-    
+    const registerMock = vi.fn().mockResolvedValue({
+      scope: '/',
+      addEventListener: vi.fn(),
+      installing: null,
+    })
+
     vi.stubGlobal('navigator', {
       serviceWorker: {
         register: registerMock,
-        getRegistrations: getRegistrationsMock,
+        getRegistrations: vi.fn().mockResolvedValue([]),
+        ready: Promise.resolve({ pushManager: null }),
       },
     })
 
     render(<PWA />)
-    
-    // The registration happens inside a window 'load' event listener in PWA.tsx
-    // So we need to trigger the load event manually
-    window.dispatchEvent(new Event('load'))
 
-    // Wait for microtasks
     await vi.waitFor(() => {
-      expect(getRegistrationsMock).toHaveBeenCalled()
+      expect(registerMock).toHaveBeenCalledWith('/sw.js', { scope: '/' })
     })
   })
 })

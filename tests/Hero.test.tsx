@@ -25,6 +25,7 @@ describe('Hero Section', () => {
     render(<Hero />)
     const img = screen.getByAltText(/MA.GI.CA Enterprise PWA Interface/i)
     expect(img).toBeInTheDocument()
-    expect(img).toHaveAttribute('src', '/hero.png')
+    // next/image rewrites src to /_next/image?url=... — check original url in src attribute
+    expect(img.getAttribute('src')).toContain('hero.png')
   })
 })
