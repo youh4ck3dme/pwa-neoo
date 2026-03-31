@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
+import TechStack from "@/components/sections/TechStack";
 import PortfolioSkeleton from "@/components/skeletons/PortfolioSkeleton";
 import SectionSkeleton from "@/components/skeletons/SectionSkeleton";
 
@@ -28,6 +29,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
+      <TechStack />
       <About />
       <HowItWorks />
       <Portfolio />

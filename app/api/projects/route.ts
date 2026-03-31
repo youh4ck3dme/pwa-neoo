@@ -41,6 +41,25 @@ export async function GET() {
   }
 }
 
+export async function DELETE() {
+  try {
+    if (!process.env.SUPABASE_SERVICE_KEY) {
+      return Response.json({ error: 'Supabase not configured' }, { status: 503 });
+    }
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
+    const { error } = await supabaseAdmin.from('projects').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    if (error) throw error;
+    return Response.json({ success: true });
+  } catch (error) {
+    console.error('DELETE /api/projects error:', error);
+    return Response.json({ error: 'Failed to delete projects' }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const project = await req.json();
