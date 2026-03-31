@@ -14,13 +14,13 @@ const Hero = () => {
           <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase">Dôveryhodná platforma pre profesionálny biznis</span>
         </div>
         
-        <h1 data-testid="hero-title" className="text-5xl lg:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[1.1] flex flex-col items-center font-display">
-          <span>Pripravení na</span>
-          <span className="text-primary-600">spoluprácu?</span>
+        <h1 data-testid="hero-title" className="text-5xl lg:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[1.1] flex flex-col items-center">
+          <span>Tvoríme PWA aplikácie</span>
+          <span className="text-primary-600">čo jednoducho fungujú.</span>
         </h1>
-        
+
         <p className="text-lg lg:text-2xl text-slate-600 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-          Zažite budúcnosť komunikácie. AI analýza, totálne súkromie a pohlcujúci filmový dizajn.
+          Premieňame nápady na produkčné Progressive Web Apps — rýchle, offline-ready a hardened bezpečnosťou pre firmy, ktoré chcú byť vždy o krok vpred.
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">

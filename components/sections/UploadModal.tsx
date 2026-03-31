@@ -151,7 +151,7 @@ const UploadModal = ({ source, onClose, onProjectAdd }: UploadModalProps) => {
     e.preventDefault();
     setPasswordError(false);
 
-    if (password !== "23513900") {
+    if (password !== "88888888") {
       setPasswordError(true);
       setPassword("");
       return;

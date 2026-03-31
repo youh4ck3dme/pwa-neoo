@@ -290,6 +290,78 @@ export default function AdminPage() {
     setMobileMenuOpen(false);
   }, [currentPage]);
 
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Check if already authorized in this session (only on mount to avoid hydration mismatch)
+  useEffect(() => {
+    setMounted(true);
+    const authorized = sessionStorage.getItem("admin-authorized");
+    if (authorized === "true") setIsAuthorized(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-slate-900" />;
+  }
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "88888888") {
+      setIsAuthorized(true);
+      sessionStorage.setItem("admin-authorized", "true");
+    } else {
+      setAuthError(true);
+      setTimeout(() => setAuthError(false), 2000);
+    }
+  };
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl border border-slate-200"
+        >
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-purple-500 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-lg mx-auto mb-4">⚡</div>
+            <h1 className="text-2xl font-black text-slate-900">Admin Prístup</h1>
+            <p className="text-slate-500 mt-2">Zadajte prístupové heslo pre pokračovanie</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="relative">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoFocus
+                className={`w-full px-5 py-4 bg-slate-50 border-2 rounded-2xl outline-none transition-all text-center text-xl tracking-widest font-bold ${
+                  authError ? "border-red-500 animate-shake bg-red-50" : "border-slate-100 focus:border-purple-500"
+                }`}
+              />
+              {authError && (
+                <p className="text-red-500 text-xs font-bold uppercase mt-2 text-center tracking-wider">Nesprávne heslo ❌</p>
+              )}
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
+            >
+              VSTÚPIŤ DO ADMINA
+            </button>
+          </form>
+
+          <p className="text-center text-slate-400 text-xs mt-8 uppercase font-bold tracking-widest">HustleDev Control Panel v2.0</p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <>
       <style>{`
@@ -385,15 +457,15 @@ export default function AdminPage() {
               transition={{ duration: 0.2 }}
               className="w-full h-full"
             >
-              { currentPage === "widgets"   && <WidgetsPage activeTab={activeWidgetTab} setActiveTab={setActiveWidgetTab} />}
-              { currentPage === "dashboard" && <DashboardPage />}
-              { currentPage === "roadmap"   && <RoadmapPage />}
-              { currentPage === "tools"     && <ToolsPage />}
-              { currentPage === "templates" && <TemplatesPage />}
-              { currentPage === "prompts"   && <PromptsPage />}
-              { currentPage === "sortable"  && <SortablePage />}
-              { currentPage === "sandbox"   && <SandboxPage />}
-              { currentPage === "deploy"    && <DeployPage />}
+              { currentPage === "widgets"   && <WidgetsPage key="widgets-page" activeTab={activeWidgetTab} setActiveTab={setActiveWidgetTab} />}
+              { currentPage === "dashboard" && <DashboardPage key="dashboard-page" />}
+              { currentPage === "roadmap"   && <RoadmapPage key="roadmap-page" />}
+              { currentPage === "tools"     && <ToolsPage key="tools-page" />}
+              { currentPage === "templates" && <TemplatesPage key="templates-page" />}
+              { currentPage === "prompts"   && <PromptsPage key="prompts-page" />}
+              { currentPage === "sortable"  && <SortablePage key="sortable-page" />}
+              { currentPage === "sandbox"   && <SandboxPage key="sandbox-page" />}
+              { currentPage === "deploy"    && <DeployPage key="deploy-page" />}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -531,9 +603,66 @@ function WidgetCard({ item, index, tabCfg }: { item: WidgetItem; index: number; 
 
 /* ── DASHBOARD PAGE ── */
 function DashboardPage() {
+  const [settings, setSettings] = useState({ showUploadSection: false });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then(res => res.json())
+      .then(data => {
+        setSettings(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleToggle = async () => {
+    const newSettings = { ...settings, showUploadSection: !settings.showUploadSection };
+    setSaving(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSettings),
+      });
+      if (res.ok) setSettings(newSettings);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
-      <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-8">🔥 Prehľad '26</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900">🔥 Prehľad '26</h2>
+        
+        {/* Feature Switches */}
+        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sekcia Nahrávanie</span>
+          <button
+            onClick={handleToggle}
+            disabled={loading || saving}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              settings.showUploadSection ? "bg-purple-600" : "bg-slate-200"
+            } ${loading || saving ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          >
+            <span
+              className={`${
+                settings.showUploadSection ? "translate-x-6" : "translate-x-1"
+              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+            />
+          </button>
+          <span className={`text-[10px] font-black uppercase ${settings.showUploadSection ? "text-purple-600" : "text-slate-400"}`}>
+            {settings.showUploadSection ? "ZAP" : "VYP"}
+          </span>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
           <h3 className="font-bold text-slate-600 text-sm mb-2 uppercase">Tvojich Projektov</h3>
@@ -1143,6 +1272,16 @@ function DeployPage() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [deploySteps, setDeploySteps] = useState<"idle" | "validate" | "build" | "wait" | "verify" | "done">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [clearConfirm, setClearConfirm] = useState(false);
+  const [clearSuccess, setClearSuccess] = useState(false);
+
+  const handleClearPortfolio = () => {
+    if (!clearConfirm) { setClearConfirm(true); return; }
+    localStorage.removeItem("magica-portfolio-projects-v2");
+    setClearConfirm(false);
+    setClearSuccess(true);
+    setTimeout(() => setClearSuccess(false), 3000);
+  };
 
   const [isSimulated, setIsSimulated] = useState(false);
 
@@ -1265,6 +1404,33 @@ function DeployPage() {
           <p className="text-sm text-amber-900">
             <strong>📌 Poznámka:</strong> Deploy workflow vyžaduje VERCEL_DEPLOY_HOOK_URL. Nastav ho v Vercel Dashboard.
           </p>
+        </div>
+
+        <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4">
+          <p className="text-sm font-bold text-slate-700 mb-3">🗑 Správa portfolio dát</p>
+          {clearSuccess && (
+            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2 mb-3">
+              ✅ Portfolio bolo úspešne vymazané z localStorage.
+            </p>
+          )}
+          <button
+            onClick={handleClearPortfolio}
+            className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${
+              clearConfirm
+                ? "bg-red-600 text-white hover:bg-red-700"
+                : "bg-white border border-slate-300 text-slate-700 hover:border-red-400 hover:text-red-600"
+            }`}
+          >
+            {clearConfirm ? "⚠️ Kliknite znova pre potvrdenie" : "🗑 Vymazať všetky projekty z homepage"}
+          </button>
+          {clearConfirm && (
+            <button
+              onClick={() => setClearConfirm(false)}
+              className="ml-2 px-4 py-2 text-sm font-bold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+            >
+              Zrušiť
+            </button>
+          )}
         </div>
       </div>
     </div>

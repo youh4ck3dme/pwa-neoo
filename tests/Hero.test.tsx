@@ -5,8 +5,8 @@ import Hero from '@/components/sections/Hero'
 describe('Hero Section', () => {
   it('renders main headline with MA.GI.CA branding', () => {
     render(<Hero />)
-    expect(screen.getByText(/Pripravení na/i)).toBeInTheDocument()
-    expect(screen.getByText(/spoluprácu/i)).toBeInTheDocument()
+    expect(screen.getByText(/Tvoríme PWA aplikácie/i)).toBeInTheDocument()
+    expect(screen.getByText(/čo jednoducho fungujú/i)).toBeInTheDocument()
   })
 
   it('shows trusted platform badge', () => {
