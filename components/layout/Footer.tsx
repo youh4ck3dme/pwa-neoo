@@ -17,29 +17,39 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-6">Navigácia</h4>
+            <h4 className="font-extrabold text-slate-900 mb-6 uppercase tracking-widest text-xs">Rýchle odkazy</h4>
             <ul className="space-y-4 text-slate-500 font-medium text-sm">
               <li><a href="#domov" className="hover:text-primary-600 transition-colors">Domov</a></li>
-              <li><a href="#o-nas" className="hover:text-primary-600 transition-colors">O spoločnosti</a></li>
-              <li><a href="#portfolio" className="hover:text-primary-600 transition-colors">Portfólio</a></li>
+              <li><a href="#sluzby" className="hover:text-primary-600 transition-colors">Enterprise Služby</a></li>
+              <li><a href="#portfolio" className="hover:text-primary-600 transition-colors">Portfólio & Laboratórium</a></li>
+              <li><a href="#kontakt" className="hover:text-primary-600 transition-colors">Kontaktujte nás</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-6">Právne s.r.o. 2026</h4>
+            <h4 className="font-extrabold text-slate-900 mb-6 uppercase tracking-widest text-xs">Právne informácie</h4>
             <ul className="space-y-4 text-slate-500 font-medium text-sm">
-              <li><a href="/privacy" className="hover:text-primary-600 transition-colors">Súkromie</a></li>
-              <li><a href="/terms" className="hover:text-primary-600 transition-colors">Podmienky</a></li>
+              <li><a href="/privacy" className="hover:text-primary-600 transition-colors">Ochrana osobných údajov</a></li>
+              <li><a href="/terms" className="hover:text-primary-600 transition-colors">Obchodné podmienky</a></li>
+              <li><a href="/cookies" className="hover:text-primary-600 transition-colors">Nastavenie Cookies</a></li>
+              <li><a href="/gdpr" className="hover:text-primary-600 transition-colors">GDPR & Zabezpečenie</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-6">Firma</h4>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              MA.GI.CA s.r.o.<br />
-              Partizánska 101/45<br />
-              96501 Žiar nad Hronom
-            </p>
+            <h4 className="font-extrabold text-slate-900 mb-6 uppercase tracking-widest text-xs">Informácie o firme</h4>
+            <div className="text-sm text-slate-500 leading-relaxed space-y-2">
+              <p className="font-bold text-slate-900">MA.GI.CA., s.r.o.</p>
+              <p>Partizánska 101/45<br />965 01 Žiar nad Hronom</p>
+              <div className="pt-2 border-t border-slate-50 space-y-1">
+                <p><span className="font-semibold text-slate-400 mr-2">IČO:</span> 31 677 517</p>
+                <p><span className="font-semibold text-slate-400 mr-2">DIČ:</span> 2020491550</p>
+              </div>
+              <div className="pt-2 border-t border-slate-50 space-y-1">
+                <p><span className="font-semibold text-slate-400 mr-2">Email:</span> <a href="mailto:magicasro@hotmail.com" className="hover:text-primary-600 transition-colors">magicasro@hotmail.com</a></p>
+                <p><span className="font-semibold text-slate-400 mr-2">Mobil:</span> <a href="tel:+421917488903" className="hover:text-primary-600 transition-colors">+421 917 488 903</a></p>
+              </div>
+            </div>
           </div>
         </div>
 

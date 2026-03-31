@@ -17,10 +17,21 @@ export async function GET() {
     const { data, error } = await supabase
       .from('projects')
       .select('*')
-      .order('createdAt', { ascending: false });
+      .order('createdat', { ascending: false });
 
     if (error) throw error;
-    return Response.json(data ?? []);
+    
+    // Map database lowercase keys back to camelCase for the frontend
+    const mappedData = (data ?? []).map((p: any) => ({
+      ...p,
+      imageUrl: p.imageurl,
+      shortDescription: p.shortdescription,
+      specialFeatures: p.specialfeatures,
+      createdAt: p.createdat,
+      updatedAt: p.updatedat,
+    }));
+
+    return Response.json(mappedData);
   } catch (error) {
     console.error('GET /api/projects error:', error);
     return Response.json(
@@ -61,9 +72,19 @@ export async function POST(req: Request) {
       process.env.SUPABASE_SERVICE_KEY!
     );
 
+    // Map camelCase to lowercase for DB insertion 
+    // (Postgres created columns as lowercase from unquoted SQL)
+    const dbProject = {
+      title: project.title,
+      imageurl: project.imageUrl,
+      shortdescription: project.shortDescription,
+      technologies: project.technologies,
+      specialfeatures: project.specialFeatures,
+    };
+
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .insert(project)
+      .insert(dbProject)
       .select()
       .single();
 

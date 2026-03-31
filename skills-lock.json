@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ba90c795da3cd7411821c7af7f2ed6f41b5bfc40119ae6b0b02bcebc8caf58c2"
+    }
+  }
+}

@@ -21,12 +21,12 @@
 create table if not exists projects (
   id uuid default gen_random_uuid() primary key,
   title text not null,
-  imageUrl text not null,
-  shortDescription text not null,
+  imageurl text not null,
+  shortdescription text not null,
   technologies text[] not null,
-  specialFeatures text[] not null,
-  createdAt timestamp with time zone default now(),
-  updatedAt timestamp with time zone default now()
+  specialfeatures text[] not null,
+  createdat timestamp with time zone default now(),
+  updatedat timestamp with time zone default now()
 );
 
 -- Enable RLS
@@ -49,7 +49,7 @@ create policy "Service role can delete projects" on projects
   for delete using (true);
 
 -- Create index for performance
-create index if not exists projects_createdAt_idx on projects(createdAt desc);
+create index if not exists projects_createdat_idx on projects(createdat desc);
 
 -- Insert sample project
 insert into projects (title, imageUrl, shortDescription, technologies, specialFeatures)
@@ -75,12 +75,12 @@ values (
 3. Click it → verify columns:
    - `id` (UUID, primary key)
    - `title` (text)
-   - `imageUrl` (text)
-   - `shortDescription` (text)
+   - `imageurl` (text)
+   - `shortdescription` (text)
    - `technologies` (text[])
-   - `specialFeatures` (text[])
-   - `createdAt` (timestamp)
-   - `updatedAt` (timestamp)
+   - `specialfeatures` (text[])
+   - `createdat` (timestamp)
+   - `updatedat` (timestamp)
 
 ### Verify RLS Policies:
 1. Click **projects** table

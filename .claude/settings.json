@@ -1,0 +1,7 @@
+{
+  "respectGitIgnore": true,
+  "initialPermissionMode": "plan",
+  "selectedModel": "claude-3-5-sonnet-latest",
+  "preferredLocation": "sidebar",
+  "autosave": true
+}

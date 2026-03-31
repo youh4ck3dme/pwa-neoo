@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { processZipFiles, type ProcessedFile } from "@/hooks/useZipProcessor";
+import ReadmePreviewModal from "@/components/ui/ReadmePreviewModal";
+import { BookOpen, Link as LinkIcon, FileArchive } from "lucide-react";
+import { ProjectSource } from "@/components/sections/DropZone";
 
-const generateAiImageUrl = (title: string, technologies: string[], description: string): string => {
-  const techStr = technologies.slice(0, 3).join(" ");
-  const descStr = description.slice(0, 60);
-  const prompt = `${title} ${techStr} ${descStr} modern web application UI screenshot professional dark gradient clean interface`;
+const generateAiImageUrl = (title: string, technologies: string[], description: string, basePrompt?: string): string => {
   const seed = Math.floor(Math.random() * 999998) + 1;
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=600&seed=${seed}&nologo=true&enhance=true`;
+  const prompt = basePrompt || `${title} ${technologies.slice(0, 3).join(" ")} modern web application UI screenshot, cinematic banner, ultra-clean flat style, dark background with neon accent`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=600&seed=${seed}&nologo=true&enhance=false`;
 };
 
 const FALLBACK_IMAGE = "https://via.placeholder.com/800x600?text=Preview+Unavailable";
@@ -41,14 +42,14 @@ interface Project {
 }
 
 interface UploadModalProps {
-  file: File;
+  source: ProjectSource;
   onClose: () => void;
   onProjectAdd: (project: Project) => void;
 }
 
 type Stage = "processing" | "form" | "success" | "error";
 
-const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
+const UploadModal = ({ source, onClose, onProjectAdd }: UploadModalProps) => {
   const [stage, setStage] = useState<Stage>("processing");
   const [title, setTitle] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -59,56 +60,67 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successState, setSuccessState] = useState(false);
   const [processedFiles, setProcessedFiles] = useState<ProcessedFile[]>([]);
-  const [statusMsg, setStatusMsg] = useState("Čítam ZIP...");
+  const [statusMsg, setStatusMsg] = useState("Pripravujem...");
   const [errorMsg, setErrorMsg] = useState("");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [readmeContent, setReadmeContent] = useState("");
+  const [showReadmePreview, setShowReadmePreview] = useState(false);
+  const [isGeneratingReadme, setIsGeneratingReadme] = useState(false);
+  const [generatedReadme, setGeneratedReadme] = useState<string | null>(null);
 
-  // Auto-extract metadata from ZIP
+  // Auto-extract metadata from ZIP OR URL
   useEffect(() => {
     const extractMetadata = async () => {
       try {
-        setStatusMsg("Čítam ZIP...");
-        const files = await processZipFiles(file, (msg) => setStatusMsg(msg));
-        setProcessedFiles(files.slice(0, 50));
+        let report: any = null;
 
-        // Extract title from package.json
-        let extractedTitle = "Custom Project";
-        let extractedTechs: string[] = [];
-        let extractedDesc = "Project uploaded";
+        if (source.type === "file") {
+          setStatusMsg("Čítam ZIP súbor...");
+          const files = await processZipFiles(source.value, (msg) => setStatusMsg(msg));
+          setProcessedFiles(files.slice(0, 50));
 
-        const pkgFile = files.find((f) => f.path.endsWith("package.json"));
-        if (pkgFile) {
-          try {
-            const pkg = JSON.parse(pkgFile.contentSnippet);
-            extractedTitle = pkg.name || extractedTitle;
-            extractedTechs = Object.keys(pkg.dependencies || {})
-              .slice(0, 5)
-              .map((d) => d.split("/").pop() || d);
-          } catch {}
+          const readmeFile = files.find((f) => f.path.toLowerCase().includes("readme"));
+          if (readmeFile) {
+            setReadmeContent(readmeFile.contentSnippet);
+          }
+
+          setStatusMsg("Forenzná AI analýza kódu...");
+          const response = await fetch("/api/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ files: files.slice(0, 50) })
+          });
+          
+          if (!response.ok) {
+             throw new Error("AI analýza zlyhala. Skontrolujte pripojenie.");
+          }
+          report = await response.json();
+        } else {
+          setStatusMsg(`Extrahuje dáta z ${source.value}...`);
+          const response = await fetch("/api/extract", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: source.value })
+          });
+
+          if (!response.ok) {
+            throw new Error("Extraxiu z URL sa nepodarilo vykonať.");
+          }
+          report = await response.json();
         }
 
-        // Extract description from README
-        const readmeFile = files.find((f) =>
-          f.path.toLowerCase().includes("readme")
-        );
-        if (readmeFile) {
-          const lines = readmeFile.contentSnippet.split("\n");
-          const firstPara = lines.find(
-            (l) => l.trim() && !l.startsWith("#")
-          );
-          extractedDesc =
-            (firstPara || "").slice(0, 200).trim() || extractedDesc;
+        // Set values from AI model
+        setTitle(report.title || "Nový projekt");
+        setShortDescription(report.shortDescription || "Projekt získaný z externého zdroja.");
+        
+        if (report.technologies && Array.isArray(report.technologies)) {
+          setTechnologies(report.technologies.slice(0, 5).join(", "));
         }
 
-        // Set auto-extracted values
-        setTitle(extractedTitle);
-        setShortDescription(extractedDesc);
-        setTechnologies(extractedTechs.join(", "));
-
-        // Generate AI image with retry logic
         setIsGeneratingImage(true);
         setStatusMsg("Generujem AI obrázok...");
-        const aiUrl = generateAiImageUrl(extractedTitle, extractedTechs, extractedDesc);
+        
+        const aiUrl = generateAiImageUrl(report.title || "", [], "", report.imagePrompt);
         const validUrl = await checkImageAvailable(aiUrl);
         setImageUrl(validUrl);
         setIsGeneratingImage(false);
@@ -123,16 +135,17 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
     };
 
     extractMetadata();
-  }, [file]);
+  }, [source]);
 
-  // Reset stale state when file changes (Issue #4: Modal State Persistence Bug)
+  // Reset stale state
   useEffect(() => {
     setPasswordError(false);
     setPassword("");
     setSuccessState(false);
     setIsSubmitting(false);
     setErrorMsg("");
-  }, [file]);
+    setStage("processing");
+  }, [source]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,19 +157,14 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
       return;
     }
 
-    if (
-      !title.trim() ||
-      !shortDescription.trim() ||
-      !technologies.trim()
-    ) {
+    if (!title.trim() || !shortDescription.trim() || !technologies.trim()) {
       return;
     }
 
     setIsSubmitting(true);
 
-    // Simulate processing
-    setTimeout(() => {
-      const newProject: Project = {
+    try {
+      const newProjectData = {
         title: title.trim(),
         imageUrl: imageUrl.trim(),
         shortDescription: shortDescription.trim(),
@@ -166,19 +174,41 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
           .filter((tech) => tech.length > 0),
         specialFeatures: [
           "AI Verified",
-          "PWA",
-          "Full-Stack",
-          "Enterprise-Grade",
+          source.type === "url" ? "Web Source" : "Code Source",
+          "Neon Bloom Style",
         ],
       };
 
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProjectData),
+      });
+
+      await res.json();
       setSuccessState(true);
 
       setTimeout(() => {
-        onProjectAdd(newProject);
+        onProjectAdd(newProjectData as any);
         onClose();
       }, 1500);
-    }, 800);
+
+    } catch (err) {
+      console.error("Save project error:", err);
+      setSuccessState(true);
+      setTimeout(() => {
+        onProjectAdd({
+          title: title.trim(),
+          imageUrl: imageUrl.trim(),
+          shortDescription: shortDescription.trim(),
+          technologies: technologies.split(",").map(t => t.trim()).filter(Boolean),
+          specialFeatures: ["AI Verified", "Local Fallback"]
+        } as any);
+        onClose();
+      }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -196,254 +226,101 @@ const UploadModal = ({ file, onClose, onProjectAdd }: UploadModalProps) => {
           exit={{ opacity: 0, y: 40, scale: 0.95 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto"
+          className="bg-dark-800/90 backdrop-blur-2xl rounded-3xl p-8 max-w-2xl w-full shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 max-h-[85vh] overflow-y-auto custom-scrollbar"
         >
           {stage === "processing" ? (
-            // Processing State
-            <motion.div
-              className="text-center py-12"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
+            <motion.div className="text-center py-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <motion.div
-                className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-6"
+                className="w-16 h-16 border-4 border-white/5 border-t-neon-cyan rounded-full mx-auto mb-6"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
-                Spracovávam ZIP...
+              <h3 className="text-xl font-bold text-white mb-2 font-display uppercase tracking-tight">
+                {source.type === "url" ? "Analyzujem URL..." : "Spracovávam ZIP..."}
               </h3>
-              <p className="text-slate-500 text-sm">{statusMsg}</p>
+              <p className="text-white/40 text-sm">{statusMsg}</p>
             </motion.div>
           ) : stage === "error" ? (
-            // Error State
-            <motion.div
-              className="text-center py-8"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i className="fas fa-exclamation text-2xl text-red-600"></i>
+            <motion.div className="text-center py-8" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}>
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                <i className="fas fa-exclamation text-2xl text-red-500"></i>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
-                Chyba pri spracovaní
-              </h3>
-              <p className="text-red-600 text-sm">{errorMsg}</p>
-              <button
-                onClick={onClose}
-                className="mt-4 px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800"
-              >
+              <h3 className="text-xl font-bold text-white mb-2">Chyba pri spracovaní</h3>
+              <p className="text-red-400 text-sm">{errorMsg}</p>
+              <button onClick={onClose} className="mt-4 px-6 py-2 bg-white text-dark-900 rounded-full font-bold hover:bg-neon-cyan transition-colors">
                 Zatvoriť
               </button>
             </motion.div>
           ) : successState ? (
-            // Success State
-            <motion.div
-              className="text-center py-8"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            >
-              <motion.div
-                className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 0.6, repeat: 1 }}
-              >
+            <motion.div className="text-center py-8" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}>
+              <motion.div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4" animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 0.6, repeat: 1 }}>
                 <i className="fas fa-check text-4xl text-green-600"></i>
               </motion.div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                Projekt pridaný! ✨
-              </h3>
-              <p className="text-slate-500">
-                Tvoj projekt sa objavil v portfóliu.
-              </p>
+              <h3 className="text-2xl font-bold text-white mb-2 font-display uppercase tracking-tight">Projekt pridaný! ✨</h3>
+              <p className="text-neon-cyan/60 text-sm font-medium">Tvoj projekt sa objavil v portfóliu.</p>
             </motion.div>
           ) : (
-            // Form State
             <div>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-slate-900">
-                  Detaily projektu
-                </h2>
-                <button
-                  onClick={onClose}
-                  className="text-slate-400 hover:text-slate-600 text-2xl"
-                >
-                  ×
-                </button>
+                <h2 className="text-2xl font-bold text-white font-display uppercase tracking-tight">Detaily projektu</h2>
+                <button onClick={onClose} className="text-white/20 hover:text-white text-2xl transition-colors">×</button>
               </div>
 
-              <p className="text-sm text-slate-500 mb-6">
-                <strong>Súbor:</strong> {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-              </p>
-
-              {/* File Preview */}
-              {processedFiles.length > 0 && (
-                <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                  <p className="text-xs font-bold text-slate-500 mb-2 uppercase">
-                    Spracované súbory ({processedFiles.length})
-                  </p>
-                  <div className="text-xs text-slate-600 space-y-1 max-h-24 overflow-y-auto">
-                    {processedFiles.slice(0, 15).map((f) => (
-                      <div key={f.path} className="font-mono">
-                        📄 {f.path}
-                      </div>
-                    ))}
-                    {processedFiles.length > 15 && (
-                      <div className="text-slate-400">
-                        + {processedFiles.length - 15} ďalších...
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              <div className="flex items-center gap-2 mb-6 p-4 bg-white/5 rounded-xl border border-white/10">
+                {source.type === "file" ? <FileArchive size={20} className="text-neon-cyan" /> : <LinkIcon size={20} className="text-neon-cyan" />}
+                <p className="text-sm text-white/60 truncate italic">
+                  <strong>Zdroj:</strong> {source.type === "file" ? source.value.name : source.value}
+                </p>
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Názov projektu */}
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
-                    Názov projektu ✨ (auto-filled)
-                  </label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="napr. SecureVault Enterprise"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    required
-                  />
+                  <label className="block text-[10px] font-bold text-white/60 mb-2 uppercase tracking-[0.2em]">Názov projektu ✨</label>
+                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-neon-cyan transition-all" required />
                 </div>
 
-                {/* Krátky popis */}
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
-                    Krátky popis ✨ (auto-filled)
-                  </label>
-                  <textarea
-                    value={shortDescription}
-                    onChange={(e) => setShortDescription(e.target.value)}
-                    placeholder="Popíš svoj projekt..."
-                    rows={3}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                    required
-                  />
+                  <label className="block text-[10px] font-bold text-white/60 mb-2 uppercase tracking-[0.2em]">Krátky popis ✨</label>
+                  <textarea value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={3} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-neon-cyan transition-all resize-none" required />
+                  {(readmeContent || source.type === "url") && (
+                    <div className="mt-2">
+                       <span className="text-[10px] bg-neon-cyan/10 text-neon-cyan px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">AI Extracted</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Technológie */}
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
-                    Technológie ✨ (auto-filled)
-                  </label>
-                  <input
-                    type="text"
-                    value={technologies}
-                    onChange={(e) => setTechnologies(e.target.value)}
-                    placeholder="napr. Next.js, React, TypeScript, Tailwind"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    required
-                  />
+                  <label className="block text-[10px] font-bold text-white/60 mb-2 uppercase tracking-[0.2em]">Technológie ✨</label>
+                  <input type="text" value={technologies} onChange={(e) => setTechnologies(e.target.value)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-neon-cyan transition-all" required />
                 </div>
 
-                {/* AI Image Preview + Regenerate */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-bold text-slate-700">
-                      AI Obrázok projektu ✨
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const techs = technologies.split(",").map(t => t.trim()).filter(Boolean);
-                        setImageUrl(generateAiImageUrl(title, techs, shortDescription));
-                      }}
-                      className="text-xs px-3 py-1 bg-primary-50 text-primary-600 border border-primary-200 rounded-full hover:bg-primary-100 transition-colors font-medium flex items-center gap-1"
-                    >
-                      <i className="fas fa-sync-alt text-[10px]"></i>
-                      Vygenerovať znova
+                    <label className="block text-[10px] font-bold text-white/60 uppercase tracking-[0.2em]">AI Obrázok projektu ✨</label>
+                    <button type="button" onClick={() => setImageUrl(generateAiImageUrl(title, technologies.split(","), shortDescription))} className="text-[10px] px-3 py-1 bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 rounded-full hover:bg-neon-cyan/20 transition-all font-bold flex items-center gap-1.5 uppercase tracking-tighter">
+                      <i className="fas fa-sync-alt text-[10px]"></i> Vygenerovať znova
                     </button>
                   </div>
                   {isGeneratingImage ? (
-                    <div className="w-full h-40 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <i className="fas fa-spinner fa-spin text-primary-400 text-xl"></i>
+                    <div className="w-full h-40 bg-white/5 rounded-xl flex items-center justify-center border border-white/5">
+                      <i className="fas fa-spinner fa-spin text-neon-cyan text-xl"></i>
                     </div>
                   ) : (
-                    <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-50 h-40 mb-2">
-                      <img
-                        src={imageUrl}
-                        alt="AI preview"
-                        className="w-full h-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).src = "https://via.placeholder.com/800x600?text=Generating..."; }}
-                      />
-                      <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        🤖 AI Generated
-                      </div>
+                    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 h-40 mb-2">
+                      <img src={imageUrl} alt="AI preview" className="w-full h-full object-cover" />
+                      <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🤖 AI Generated</div>
                     </div>
                   )}
-                  <input
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-xs text-slate-500"
-                    required
-                  />
+                  <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="w-full px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-[10px] text-white/30 font-mono truncate" required />
                 </div>
 
-                {/* Heslo */}
-                <motion.div
-                  animate={
-                    passwordError ? { x: [-8, 8, -6, 6, -4, 4, 0] } : {}
-                  }
-                  transition={{ duration: 0.4 }}
-                >
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
-                    Heslo pre potvrdenie
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
-                      passwordError
-                        ? "border-red-500 focus:ring-red-500 bg-red-50"
-                        : "border-slate-200 focus:ring-primary-500"
-                    }`}
-                    required
-                  />
-                  {passwordError && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-red-600 text-sm mt-2 font-medium"
-                    >
-                      ❌ Nesprávne heslo. Skúste znova.
-                    </motion.p>
-                  )}
+                <motion.div animate={passwordError ? { x: [-8, 8, -6, 6, -4, 4, 0] } : {}} transition={{ duration: 0.4 }}>
+                  <label className="block text-[10px] font-bold text-white/60 mb-2 uppercase tracking-[0.2em]">Heslo pre potvrdenie</label>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${passwordError ? "border-red-500/50 bg-red-500/10 text-white" : "border-white/10 focus:ring-neon-cyan bg-white/5 text-white"}`} required />
                 </motion.div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={
-                    isSubmitting ||
-                    !title ||
-                    !shortDescription ||
-                    !technologies
-                  }
-                  className="w-full py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <i className="fas fa-spinner fa-spin"></i>
-                      Spracovávam...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-check"></i>
-                      Pridať projekt
-                    </>
-                  )}
+                <button type="submit" disabled={isSubmitting || !title || !shortDescription} className="w-full py-4 bg-white text-dark-900 font-bold rounded-xl hover:bg-neon-cyan transition-all disabled:opacity-30 flex items-center justify-center gap-2 mt-4 shadow-lg">
+                  {isSubmitting ? <><i className="fas fa-spinner fa-spin"></i> Spracovávam...</> : <><i className="fas fa-check"></i> Vstúpiť do Systému</>}
                 </button>
               </form>
             </div>

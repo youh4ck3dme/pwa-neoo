@@ -192,7 +192,7 @@ const handleFileSelect = (file: File) => {
 ---
 
 ### 6. Admin Page Render Performance
-**Severity**: 🟡 Medium
+**Status**: ✅ **FIXED** (Architektúra prerobená na tabový systém s izolovanými listami po 10 kariet)
 **Location**: `app/admin/page.tsx:120+`
 **Problem**: Renders 50 widgets (each with hover effects, icons, click handlers) + 40 tools + 32 templates all at once
 
@@ -259,6 +259,7 @@ useEffect(() => {
 ## 🟢 Minor Issues (Low Priority)
 
 ### 8. No Loading State for External Links
+**Status**: ✅ **FIXED** (Pridaný lokálny stav isClicked a animácia spinnera)
 **Location**: `app/admin/page.tsx:tools and templates`
 **Problem**: Clicking external links (href open in new tab) shows no feedback
 
@@ -273,6 +274,7 @@ const handleExternalClick = (url: string) => {
 ---
 
 ### 9. Typography Line-Height Inconsistency
+**Status**: ✅ **FIXED** (Explicitné deklarovanie do extend v téme modulu tailwind)
 **Location**: `tailwind.config.ts`
 **Problem**: No explicit line-height configured. Font Outfit might render differently than Montserrat (previous font)
 
@@ -420,4 +422,4 @@ Example:
 ---
 
 **Last updated**: 28.03.2026
-**Status**: 7 issues identified, 2 critical (localStorage + AI timeout), 3 medium (memory leak, modal state, ZIP validation), 2 low (loading states, line-height)
+**Status**: ✅ Všetkých 10 chýb úspešne opravených. Aplikácia je pripravená na prechod na databázový model (Supabase).

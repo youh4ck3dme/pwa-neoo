@@ -1,0 +1,9 @@
+[dotenv@17.3.1] injecting env (9) from .env.local -- tip: ⚙️  suppress all logs with { quiet: true }
+--- Vercel AI Gateway Test ---
+URL: https://ai-gateway.vercel.sh/v1
+Key: CONFIGURED (vck_...)
+
+Sending test request (gpt-4o-mini)...
+
+❌ Gateway Test Failed:
+403 AI Gateway requires a valid credit card on file to service requests. Please visit https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dadd-credit-card to add a card and unlock your free credits.

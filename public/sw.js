@@ -4,10 +4,10 @@
 // Features: Background Sync, Push Notifications, Offline Fallback
 // ═══════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'magica-pwa-v4';
-const STATIC_CACHE = 'magica-static-v4';
-const PAGES_CACHE = 'magica-pages-v4';
-const RUNTIME_CACHE = 'magica-runtime-v4';
+const CACHE_NAME = 'magica-pwa-v5';
+const STATIC_CACHE = 'magica-static-v5';
+const PAGES_CACHE = 'magica-pages-v5';
+const RUNTIME_CACHE = 'magica-runtime-v5';
 
 // ── Assets to pre-cache on install ──
 const PRECACHE_ASSETS = [

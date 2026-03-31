@@ -15,34 +15,34 @@ const Contact = () => {
   };
 
   return (
-    <section id="kontakt" data-testid="contact-section" className="py-24 bg-slate-900 relative">
+    <section id="kontakt" data-testid="contact-section" className="py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="lg:w-1/2">
-            <div className="inline-block px-4 py-1.5 bg-purple-900/30 border border-purple-700/50 rounded-[7px] mb-6 text-sm font-bold uppercase tracking-widest"><span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-violet-300 bg-clip-text text-transparent">Kontakt a spolupráca</span></div>
-            <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-8">Pripravení na <span className="gradient-text">spoluprácu</span>?</h2>
-            <p className="text-xl text-slate-400 leading-relaxed mb-12 font-medium">
+            <div className="inline-block px-4 py-1.5 bg-slate-50 border border-slate-100 rounded-[7px] mb-6 text-sm font-bold uppercase tracking-widest text-slate-500">Kontakt a spolupráca</div>
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-8">Pripravení na <span className="text-primary-600">spoluprácu</span>?</h2>
+            <p className="text-xl text-slate-600 leading-relaxed mb-12 font-medium">
               Máte nápad alebo projekt? Pomôžeme ho pretaviť do funkčnej PWA alebo full‑stack riešenia.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div className="flex items-center gap-5 group">
-                <div className="w-16 h-16 bg-slate-800 text-primary-50 rounded-[7px] flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
+                <div className="w-16 h-16 bg-slate-50 text-slate-900 rounded-[7px] border border-slate-100 flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h4 className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-1">Zavolajte nám</h4>
-                  <a href="tel:0917488903" className="text-white font-bold text-xl hover:text-primary-400 transition-colors">0917 488 903</a>
+                  <h4 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">Zavolajte nám</h4>
+                  <a href="tel:0917488903" className="text-slate-900 font-bold text-xl hover:text-primary-600 transition-colors">0917 488 903</a>
                 </div>
               </div>
 
               <div className="flex items-center gap-5 group">
-                <div className="w-16 h-16 bg-slate-800 text-primary-50 rounded-[7px] flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
+                <div className="w-16 h-16 bg-slate-50 text-slate-900 rounded-[7px] border border-slate-100 flex items-center justify-center text-3xl group-hover:bg-primary-600 group-hover:text-white transition-all">
                   <Mail size={24} />
                 </div>
                 <div>
-                  <h4 className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-1">Napíšte nám</h4>
-                  <a href="mailto:magicasro@hotmail.com" className="text-white font-bold text-lg hover:text-primary-400 transition-colors">magicasro@hotmail.com</a>
+                  <h4 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">Napíšte nám</h4>
+                  <a href="mailto:magicasro@hotmail.com" className="text-slate-900 font-bold text-lg hover:text-primary-600 transition-colors">magicasro@hotmail.com</a>
                 </div>
               </div>
             </div>

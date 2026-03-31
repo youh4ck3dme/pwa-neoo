@@ -145,7 +145,7 @@ describe('Portfolio Component', () => {
   });
 
   it('should handle localStorage quota exceeded', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Simulate quota exceeded error
     const mockError = new Error('QuotaExceededError');

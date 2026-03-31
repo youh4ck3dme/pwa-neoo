@@ -3,30 +3,42 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 15, 23, 42;
-  --background-start-rgb: 252, 252, 252;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 10, 10, 12;
+  --background-end-rgb: 0, 0, 0;
+  --neon-cyan: #00f2ff;
+  --neon-pink: #ff00ae;
 }
 
 html {
   scroll-behavior: smooth;
+  background: #0a0a0c;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  background: radial-gradient(circle at 50% 50%, #121214 0%, #050505 100%);
+  min-height: 100vh;
 }
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-600;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan via-white to-neon-pink animate-glow;
+}
+
+.neon-border {
+  @apply border border-neon-cyan/30 shadow-[0_0_15px_rgba(0,242,255,0.1)] hover:border-neon-cyan/60 hover:shadow-[0_0_25px_rgba(0,242,255,0.2)] transition-all duration-500;
 }
 
 .glass-header {
-  @apply bg-white/40 backdrop-blur-xl border-b border-white/20;
+  @apply bg-black/40 backdrop-blur-xl border-b border-white/5;
 }
 
 .mesh-gradient {
-  background: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
-    radial-gradient(at 50% 0%, rgba(139, 92, 246, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+  background: radial-gradient(at 0% 0%, rgba(0, 242, 255, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(255, 0, 174, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+}
+
+.neon-glow-text {
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.3);
 }

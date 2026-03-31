@@ -73,9 +73,12 @@ export async function processZipFiles(
     if (totalUnzipped > MAX_UNZIPPED_SIZE)
       throw new Error("ZIP je príliš veľký po rozbalení (možná ZIP bomba). Max: 200 MB.");
 
+    const isReadme = path.toLowerCase().includes("readme");
+    const currentSnippetSize = isReadme ? 50000 : SNIPPET_SIZE;
+
     const snippet =
-      raw.length > SNIPPET_SIZE
-        ? raw.slice(0, SNIPPET_SIZE) + "\n\n...TRUNCATED..."
+      raw.length > currentSnippetSize
+        ? raw.slice(0, currentSnippetSize) + "\n\n...TRUNCATED..."
         : raw;
 
     processed.push({ path, ext, size: raw.length, contentSnippet: snippet });

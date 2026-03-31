@@ -10,6 +10,16 @@ export async function POST() {
   try {
     // Check if Deploy Hook is configured
     if (!process.env.VERCEL_DEPLOY_HOOK_URL) {
+      // In development, we allow mocking the workflow
+      if (process.env.NODE_ENV === 'development') {
+        const result = await deployWorkflow();
+        return Response.json({
+          status: 'simulated',
+          mock: true,
+          workflowResult: result
+        });
+      }
+
       return Response.json(
         {
           error: 'Deploy Hook not configured',

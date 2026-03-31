@@ -4,6 +4,7 @@ import "./globals.css";
 
 import PWA from "@/components/PWA";
 import NotificationPrompt from "@/components/ui/NotificationPrompt";
+import ChatWidget from "@/components/ui/ChatWidget";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -14,16 +15,14 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://magicasro.cloud"),
   title: {
-    default: "MA.GI.CA — Enterprise PWA Engineering & Cybersecurity",
-    template: "%s | MA.GI.CA Enterprise",
+    default: "MA.GI.CA Enterprise — High-End PWA Engineering",
+    template: "%s | MA.GI.CA",
   },
-  description: "Produkčné PWA aplikácie a kybernetická bezpečnosť pre najnáročnejších klientov. Enterprise-grade riešenia s WAF, DNSSEC, audit logmi a hardened infraštruktúrou.",
+  description: "Produkčné PWA aplikácie a kybernetická bezpečnosť pre najnáročnejších klientov. Enterprise software engineering s dôrazom na stabilitu a výkon.",
   manifest: "/manifest.json",
   keywords: [
-    "PWA", "cybersecurity", "enterprise", "web application firewall",
-    "government-safe", "DNSSEC", "hardened infrastructure", "audit",
-    "progressive web app", "kybernetická bezpečnosť", "enterprise riešenia",
-    "MA.GI.CA", "webová bezpečnosť", "WAF Slovensko",
+    "MA.GI.CA", "Enterprise PWA", "Cybersecurity", "Software Engineering",
+    "Next.js", "React", "Mobile Apps", "Security Audit",
   ],
   authors: [{ name: "MA.GI.CA s.r.o.", url: "https://magicasro.cloud" }],
   creator: "MA.GI.CA s.r.o.",
@@ -44,21 +43,21 @@ export const metadata: Metadata = {
     locale: "sk_SK",
     url: "https://magicasro.cloud",
     siteName: "MA.GI.CA Enterprise",
-    title: "MA.GI.CA — Enterprise PWA Engineering & Cybersecurity",
-    description: "Produkčné PWA aplikácie a kybernetická bezpečnosť pre najnáročnejších klientov.",
+    title: "MA.GI.CA Enterprise — PWA Engineering & Cybersecurity",
+    description: "Enterprise software engineering s dôrazom na stabilitu a výkon.",
     images: [
       {
         url: "/hero.png",
         width: 1200,
         height: 630,
-        alt: "MA.GI.CA Enterprise PWA & Cybersecurity Platform",
+        alt: "MA.GI.CA Enterprise Showcase",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MA.GI.CA — Enterprise PWA & Cybersecurity",
-    description: "Produkčné PWA aplikácie a kybernetická bezpečnosť pre najnáročnejších klientov.",
+    title: "MA.GI.CA Enterprise — High-End Engineering",
+    description: "Produkčné PWA aplikácie a kybernetická bezpečnosť.",
     images: ["/hero.png"],
   },
   alternates: {
@@ -171,10 +170,11 @@ export default function RootLayout({
         {/* Preload LCP image */}
         <link rel="preload" as="image" href="/hero.png" />
       </head>
-      <body className={`${outfit.variable} font-body antialiased bg-[#fcfcfc] mesh-gradient`}>
+      <body className={`${outfit.variable} font-body antialiased bg-white text-slate-900 selection:bg-primary-100 selection:text-primary-900`}>
         <PWA />
         {children}
         <NotificationPrompt />
+        <ChatWidget />
       </body>
     </html>
   );

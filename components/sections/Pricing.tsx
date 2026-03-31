@@ -79,7 +79,7 @@ const Pricing = () => {
         <div className="mb-20">
           <div className="inline-block px-4 py-1.5 bg-slate-50 border border-slate-100 rounded-[7px] mb-6 text-sm font-bold text-slate-500 uppercase tracking-widest">Enterprise Solutions</div>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
-            Dôveryhodná platforma pre <br /><span className="gradient-text">profesionálny biznis</span>
+            Dôveryhodná platforma pre <br /><span className="text-primary-600">profesionálny biznis</span>
           </h2>
           <p className="text-lg text-slate-500 font-medium max-w-3xl">
             Nevyvíjame len web, ale bezpečnú digitálnu bránu pripravenú aj pre prostredia s najprísnejšími pravidlami.

@@ -3,27 +3,27 @@ import { render, screen } from '@testing-library/react'
 import Hero from '@/components/sections/Hero'
 
 describe('Hero Section', () => {
-  it('renders main headline with enterprise focus', () => {
+  it('renders main headline with MA.GI.CA branding', () => {
     render(<Hero />)
-    expect(screen.getByText(/Enterprise PWA/i)).toBeInTheDocument()
-    expect(screen.getByText(/Cybersecurity/i)).toBeInTheDocument()
+    expect(screen.getByText(/Pripravení na/i)).toBeInTheDocument()
+    expect(screen.getByText(/spoluprácu/i)).toBeInTheDocument()
   })
 
-  it('shows AI-POWERED WORKFLOW badge', () => {
+  it('shows trusted platform badge', () => {
     render(<Hero />)
-    expect(screen.getByText('AI-POWERED WORKFLOW')).toBeInTheDocument()
+    expect(screen.getByText(/Dôveryhodná platforma pre profesionálny biznis/i)).toBeInTheDocument()
   })
 
-  it('renders primary CTA button "Pridať projekt"', () => {
+  it('renders primary CTA button "Vstúpiť do Centrály"', () => {
     render(<Hero />)
-    const cta = screen.getByText('Pridať projekt')
+    const cta = screen.getByText('Vstúpiť do Centrály')
     expect(cta).toBeInTheDocument()
     expect(cta).toHaveAttribute('href', '#portfolio')
   })
 
   it('renders hero image with correct alt text', () => {
     render(<Hero />)
-    const img = screen.getByAltText(/MA.GI.CA Enterprise PWA Interface/i)
+    const img = screen.getByAltText(/MA\.GI\.CA Enterprise Interface Showcase/i)
     expect(img).toBeInTheDocument()
     // next/image rewrites src to /_next/image?url=... — check original url in src attribute
     expect(img.getAttribute('src')).toContain('hero.png')

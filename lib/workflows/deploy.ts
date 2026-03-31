@@ -58,6 +58,16 @@ async function triggerVercelBuild() {
   const hookUrl = process.env.VERCEL_DEPLOY_HOOK_URL;
 
   if (!hookUrl) {
+    // In development mode, simulate the build trigger
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        success: true,
+        simulated: true,
+        jobId: `sim_${Math.random().toString(36).substring(7)}`,
+        message: 'Simulation: Vercel build triggered locally'
+      };
+    }
+
     throw new Error(
       'VERCEL_DEPLOY_HOOK_URL not configured. Set it in Vercel Dashboard → Settings → Git → Deploy Hooks'
     );

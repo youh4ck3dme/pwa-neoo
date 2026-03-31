@@ -1,7 +1,31 @@
 "use client";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { processZipFiles } from "@/hooks/useZipProcessor";
 
-type PageId = "dashboard" | "roadmap" | "tools" | "templates" | "widgets" | "sandbox" | "deploy";
+// ── ROADMAP DATA ──
+const roadmapPhases = [
+  { phase: 1, title: "Začínam (0–1 000€/mes)", color: "bg-red-500", emoji: "🌱", items: [
+    "Zostav portfólio (5–10 projektov)",
+    "Nastav LinkedIn + Behance",
+    "Prvé zákazky na Toptal/Upwork",
+    "Cena: 15–25€/hod",
+  ]},
+  { phase: 2, title: "Rast (1 000–3 000€/mes)", color: "bg-yellow-500", emoji: "📈", items: [
+    "Vyber niku (reštaurácie, real estate, SaaS)",
+    "Zvýš cenu na 40–70€/hod",
+    "Referral systém (10% provízia)",
+    "Vlastné produkty (šablóny, snippety)",
+  ]},
+  { phase: 3, title: "Pro (3 000+€/mes)", color: "bg-green-500", emoji: "🚀", items: [
+    "Retainer zmluvy (pevná mesačná platba)",
+    "Mini agentúra / subcontractori",
+    "SaaS produkt alebo digitálny produkt",
+    "Cena: 100+€/hod alebo 2k–10k€/projekt",
+  ]},
+];
+
+type PageId = "dashboard" | "roadmap" | "tools" | "templates" | "widgets" | "sandbox" | "deploy" | "prompts" | "sortable";
 type WidgetTabId = "wow" | "conversion" | "data" | "community" | "utils";
 
 interface WidgetItem {
@@ -9,6 +33,43 @@ interface WidgetItem {
   desc: string;
   tags: string[];
   url: string;
+}
+
+/* ── ROADMAP PAGE ── */
+function RoadmapPage() {
+  return (
+    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in text-left">
+      <div className="space-y-3 mb-12">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">Master Roadmapa</h2>
+        <p className="text-lg text-slate-600 max-w-3xl">Tvoj 3-fázový plán na cestu k €3000+/mesiac.</p>
+      </div>
+      <div className="space-y-6">
+        {roadmapPhases.map((phase, idx) => (
+          <div key={phase.phase} className="relative">
+            <div className={`${phase.color} rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl shadow-lg mx-auto mb-4`}>
+              {phase.emoji}
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-left">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">{phase.title}</h3>
+              <ul className="space-y-2">
+                {phase.items.map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-600">
+                    <span className="text-primary-600 font-bold mt-0.5">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {idx < roadmapPhases.length - 1 && (
+              <div className="flex justify-center my-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-slate-300 to-transparent" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 interface WidgetCategory {
   title: string;
@@ -197,27 +258,7 @@ const templatesData = {
   ]},
 };
 
-// ── ROADMAP DATA ──
-const roadmapPhases = [
-  { phase: 1, title: "Začínam (0–1 000€/mes)", color: "bg-red-500", emoji: "🌱", items: [
-    "Zostav portfólio (5–10 projektov)",
-    "Nastav LinkedIn + Behance",
-    "Prvé zákazky na Toptal/Upwork",
-    "Cena: 15–25€/hod",
-  ]},
-  { phase: 2, title: "Rast (1 000–3 000€/mes)", color: "bg-yellow-500", emoji: "📈", items: [
-    "Vyber niku (reštaurácie, real estate, SaaS)",
-    "Zvýš cenu na 40–70€/hod",
-    "Referral systém (10% provízia)",
-    "Vlastné produkty (šablóny, snippety)",
-  ]},
-  { phase: 3, title: "Pro (3 000+€/mes)", color: "bg-green-500", emoji: "🚀", items: [
-    "Retainer zmluvy (pevná mesačná platba)",
-    "Mini agentúra / subcontractori",
-    "SaaS produkt alebo digitálny produkt",
-    "Cena: 100+€/hod alebo 2k–10k€/projekt",
-  ]},
-];
+
 
 const tabConfig: Record<WidgetTabId, { label: string; emoji: string; topBar: string; titleHover: string; btnHover: string }> = {
   wow:        { label: "Wow Animácie",      emoji: "✨", topBar: "bg-fuchsia-500", titleHover: "group-hover:text-fuchsia-600", btnHover: "hover:border-fuchsia-400 hover:bg-fuchsia-50 hover:text-fuchsia-700" },
@@ -233,6 +274,8 @@ const navItems: { id: PageId; label: string; emoji: string }[] = [
   { id: "tools",      label: "Real Free Stack",   emoji: "🧰" },
   { id: "templates",  label: "Top 50 Šablón",     emoji: "📦" },
   { id: "widgets",    label: "Top 50 Widgetov",   emoji: "🧩" },
+  { id: "prompts",    label: "Prompty",           emoji: "⌨️" },
+  { id: "sortable",   label: "Sortable UI",       emoji: "🖐️" },
   { id: "sandbox",    label: "ZIP Sandbox",       emoji: "🔐" },
   { id: "deploy",     label: "Deploy",            emoji: "🚀" },
 ];
@@ -332,14 +375,27 @@ export default function AdminPage() {
         </aside>
 
         {/* ── MAIN CONTENT ── */}
-        <main className="flex-1 overflow-y-auto">
-          {currentPage === "widgets"   && <WidgetsPage activeTab={activeWidgetTab} setActiveTab={setActiveWidgetTab} />}
-          {currentPage === "dashboard" && <DashboardPage />}
-          {currentPage === "roadmap"   && <RoadmapPage />}
-          {currentPage === "tools"     && <ToolsPage />}
-          {currentPage === "templates" && <TemplatesPage />}
-          {currentPage === "sandbox"   && <SandboxPage />}
-          {currentPage === "deploy"    && <DeployPage />}
+        <main className="flex-1 overflow-y-auto relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-full"
+            >
+              { currentPage === "widgets"   && <WidgetsPage activeTab={activeWidgetTab} setActiveTab={setActiveWidgetTab} />}
+              { currentPage === "dashboard" && <DashboardPage />}
+              { currentPage === "roadmap"   && <RoadmapPage />}
+              { currentPage === "tools"     && <ToolsPage />}
+              { currentPage === "templates" && <TemplatesPage />}
+              { currentPage === "prompts"   && <PromptsPage />}
+              { currentPage === "sortable"  && <SortablePage />}
+              { currentPage === "sandbox"   && <SandboxPage />}
+              { currentPage === "deploy"    && <DeployPage />}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </>
@@ -422,6 +478,13 @@ function WidgetsPage({ activeTab, setActiveTab }: { activeTab: WidgetTabId; setA
 
 /* ── WIDGET CARD ── */
 function WidgetCard({ item, index, tabCfg }: { item: WidgetItem; index: number; tabCfg: typeof tabConfig[WidgetTabId] }) {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(true);
+    setTimeout(() => setIsClicked(false), 2000);
+  };
+
   return (
     <div className={`widget-card bg-slate-50 rounded-xl sm:rounded-2xl p-5 border border-slate-200 flex flex-col justify-between group relative overflow-hidden hover:border-slate-300`}>
       <div>
@@ -447,12 +510,20 @@ function WidgetCard({ item, index, tabCfg }: { item: WidgetItem; index: number; 
         href={item.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleClick}
         className={`inline-flex items-center justify-between w-full py-2.5 px-4 bg-white border-2 border-slate-200 ${tabCfg.btnHover} text-slate-700 font-bold rounded-xl transition-all shadow-sm text-sm group/btn`}
       >
-        <span>Preskúmať Dokumentáciu</span>
-        <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
+        <span>{isClicked ? "Otváram..." : "Preskúmať Dokumentáciu"}</span>
+        {isClicked ? (
+          <svg className="animate-spin w-4 h-4 text-slate-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        ) : (
+          <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        )}
       </a>
     </div>
   );
@@ -483,6 +554,268 @@ function DashboardPage() {
       <div className="mt-10 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 border border-purple-200">
         <h3 className="text-xl font-bold text-slate-900 mb-2">💡 Tip</h3>
         <p className="text-slate-600">Naviguj na <strong>Real Free Stack</strong> aby si videl všetky free nástroje na hosting, databázy a auth. <strong>Master Roadmapa</strong> ťa naučí ako zarobiť 3000€+/mesiac.</p>
+      </div>
+
+      {/* AI Tools */}
+      <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PriceEstimatorCard />
+        <ContentGeneratorCard />
+      </div>
+    </div>
+  );
+}
+
+/* ── PRICE ESTIMATOR CARD ── */
+function PriceEstimatorCard() {
+  const [projectType, setProjectType] = useState("PWA");
+  const [features, setFeatures] = useState<string[]>([]);
+  const [complexity, setComplexity] = useState(3);
+  const [timeline, setTimeline] = useState("standard");
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
+
+  const featureOptions = ["Auth / Login", "Platby (Stripe)", "Admin panel", "AI integrácia", "PWA / Offline", "Push notifikácie", "Databáza", "API integrácia", "E-commerce", "Multi-language"];
+
+  const toggleFeature = (f: string) => {
+    setFeatures(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
+  };
+
+  const handleEstimate = async () => {
+    setIsLoading(true);
+    setError("");
+    setResult(null);
+    try {
+      const res = await fetch("/api/estimate-price", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectType, features, complexity, timeline }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed");
+      setResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Chyba");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyEstimate = () => {
+    if (!result) return;
+    const text = `Cenový odhad — ${projectType}\nMin: ${result.min}€ | Očakávané: ${result.expected}€ | Max: ${result.max}€\nTermín: ~${result.timeline_weeks} týždňov\n\nPoznámky:\n${(result.notes || []).join("\n")}`;
+    navigator.clipboard.writeText(text);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="h-1 bg-gradient-to-r from-emerald-400 to-teal-500" />
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-slate-900 mb-1">💰 AI Cenový Odhad</h3>
+        <p className="text-sm text-slate-500 mb-5">Generuje cenu projektu na základe parametrov</p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Typ projektu</label>
+            <select value={projectType} onChange={e => setProjectType(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+              {["PWA", "E-commerce", "SaaS / Admin", "Landing Page", "API Backend", "Mobile App"].map(t => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Funkcie</label>
+            <div className="flex flex-wrap gap-1.5">
+              {featureOptions.map(f => (
+                <button key={f} type="button" onClick={() => toggleFeature(f)}
+                  className={`text-[11px] px-2.5 py-1 rounded-full border font-medium transition-colors ${features.includes(f) ? "bg-emerald-100 border-emerald-400 text-emerald-700" : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300"}`}>
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">
+              Zložitosť: {complexity}/5
+            </label>
+            <input type="range" min={1} max={5} value={complexity} onChange={e => setComplexity(Number(e.target.value))}
+              className="w-full accent-emerald-500" />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Termín</label>
+            <select value={timeline} onChange={e => setTimeline(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+              <option value="urgent">Urgentný (2× cena)</option>
+              <option value="fast">Rýchly (1.3× cena)</option>
+              <option value="standard">Štandardný</option>
+              <option value="relaxed">Flexibilný (discount)</option>
+            </select>
+          </div>
+
+          <button onClick={handleEstimate} disabled={isLoading}
+            className="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors text-sm">
+            {isLoading ? "⏳ Počítam..." : "💰 Vypočítať odhad"}
+          </button>
+        </div>
+
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+        {result && (
+          <div className="mt-5 fade-in">
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {[
+                { label: "Min", value: result.min, color: "text-slate-700" },
+                { label: "Očakávané", value: result.expected, color: "text-emerald-600" },
+                { label: "Max", value: result.max, color: "text-slate-700" },
+              ].map(item => (
+                <div key={item.label} className="text-center bg-slate-50 rounded-xl p-3 border border-slate-200">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase">{item.label}</p>
+                  <p className={`text-xl font-extrabold ${item.color}`}>{item.value?.toLocaleString()}€</p>
+                </div>
+              ))}
+            </div>
+            {result.timeline_weeks && (
+              <p className="text-sm text-slate-600 mb-2">⏱️ Termín: ~<strong>{result.timeline_weeks} týždňov</strong> | Sadzba: {result.hourly_rate}€/h</p>
+            )}
+            {result.notes?.length > 0 && (
+              <ul className="text-xs text-slate-500 space-y-1 mb-3">
+                {result.notes.slice(0, 3).map((n: string, i: number) => (
+                  <li key={i} className="flex gap-1.5"><span>•</span>{n}</li>
+                ))}
+              </ul>
+            )}
+            <button onClick={copyEstimate}
+              className="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors font-medium">
+              📋 Kopírovať odhad
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── CONTENT GENERATOR CARD ── */
+function ContentGeneratorCard() {
+  const [contentType, setContentType] = useState<"linkedin-post" | "email-pitch" | "case-study" | "tech-summary">("linkedin-post");
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const contentTypeLabels = {
+    "linkedin-post": "LinkedIn Post",
+    "email-pitch": "Email Pitch",
+    "case-study": "Case Study",
+    "tech-summary": "Tech Summary",
+  };
+
+  const handleGenerate = async () => {
+    if (!projectTitle.trim()) return;
+    setIsLoading(true);
+    setError("");
+    setResult(null);
+    try {
+      const res = await fetch("/api/generate-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentType, projectTitle, projectDescription }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed");
+      setResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Chyba");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    if (!result) return;
+    const text = contentType === "linkedin-post" && result.hashtags?.length
+      ? `${result.content}\n\n${result.hashtags.join(" ")}`
+      : result.content;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="h-1 bg-gradient-to-r from-violet-400 to-purple-500" />
+      <div className="p-6">
+        <h3 className="text-xl font-bold text-slate-900 mb-1">✍️ AI Generátor Obsahu</h3>
+        <p className="text-sm text-slate-500 mb-5">LinkedIn posty, emaily, case studies</p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Typ obsahu</label>
+            <div className="grid grid-cols-2 gap-1.5">
+              {(Object.entries(contentTypeLabels) as [typeof contentType, string][]).map(([key, label]) => (
+                <button key={key} type="button" onClick={() => setContentType(key)}
+                  className={`py-2 text-xs font-bold rounded-lg border transition-colors ${contentType === key ? "bg-violet-100 border-violet-400 text-violet-700" : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300"}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Názov projektu *</label>
+            <input value={projectTitle} onChange={e => setProjectTitle(e.target.value)}
+              placeholder="napr. SecureVault Enterprise PWA"
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase mb-1.5 block">Popis (voliteľné)</label>
+            <textarea value={projectDescription} onChange={e => setProjectDescription(e.target.value)}
+              placeholder="Krátky popis projektu..."
+              rows={2}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none" />
+          </div>
+
+          <button onClick={handleGenerate} disabled={isLoading || !projectTitle.trim()}
+            className="w-full py-2.5 bg-violet-600 text-white font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors text-sm">
+            {isLoading ? "⏳ Generujem..." : "✍️ Generovať obsah"}
+          </button>
+        </div>
+
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+        {result && (
+          <div className="mt-5 fade-in">
+            {result.title && (
+              <p className="text-xs font-bold text-slate-500 uppercase mb-1.5">{result.title}</p>
+            )}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap max-h-48 overflow-y-auto mb-2">
+              {result.content}
+            </div>
+            {contentType === "linkedin-post" && result.hashtags?.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-3">
+                {result.hashtags.slice(0, 6).map((h: string) => (
+                  <span key={h} className="text-[11px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full border border-blue-200 font-medium">{h}</span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              {result.wordCount && (
+                <span className="text-xs text-slate-400">{result.wordCount} slov</span>
+              )}
+              <button onClick={handleCopy}
+                className="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors font-medium">
+                {copied ? "✅ Skopírované!" : "📋 Kopírovať"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -554,42 +887,7 @@ function TemplatesPage() {
   );
 }
 
-/* ── ROADMAP PAGE ── */
-function RoadmapPage() {
-  return (
-    <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto pb-20 fade-in">
-      <div className="space-y-3 mb-12">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">Master Roadmapa</h2>
-        <p className="text-lg text-slate-600 max-w-3xl">Tvoj 3-fázový plán na cestu k €3000+/mesiac.</p>
-      </div>
-      <div className="space-y-6">
-        {roadmapPhases.map((phase, idx) => (
-          <div key={phase.phase} className="relative">
-            <div className={`${phase.color} rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl shadow-lg mx-auto mb-4`}>
-              {phase.emoji}
-            </div>
-            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">{phase.title}</h3>
-              <ul className="space-y-2">
-                {phase.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-slate-600">
-                    <span className="text-primary-600 font-bold mt-0.5">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {idx < roadmapPhases.length - 1 && (
-              <div className="flex justify-center my-6">
-                <div className="w-1 h-8 bg-gradient-to-b from-slate-300 to-transparent" />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+
 
 /* ── SANDBOX PAGE ── */
 function SandboxPage() {
@@ -597,6 +895,9 @@ function SandboxPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditResult, setAuditResult] = useState<any>(null);
+  const [expandedIssue, setExpandedIssue] = useState<number | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -604,6 +905,28 @@ function SandboxPage() {
       setSelectedFile(file);
       setErrorMessage("");
       setSuccessMessage("");
+      setAuditResult(null);
+    }
+  };
+
+  const handleSecurityAudit = async () => {
+    if (!selectedFile) return;
+    setIsAuditing(true);
+    setAuditResult(null);
+    try {
+      const files = await processZipFiles(selectedFile, () => {});
+      const res = await fetch("/api/security-audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ files: files.slice(0, 30) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Audit failed");
+      setAuditResult(data);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Audit zlyhal");
+    } finally {
+      setIsAuditing(false);
     }
   };
 
@@ -652,6 +975,7 @@ function SandboxPage() {
     setSelectedFile(null);
     setErrorMessage("");
     setSuccessMessage("");
+    setAuditResult(null);
   };
 
   return (
@@ -712,7 +1036,7 @@ function SandboxPage() {
               </ul>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 mb-4">
               <button
                 onClick={handleApprove}
                 disabled={isProcessing}
@@ -728,6 +1052,79 @@ function SandboxPage() {
                 ❌ Zamietnuť
               </button>
             </div>
+
+            {/* Security Audit Button */}
+            <button
+              onClick={handleSecurityAudit}
+              disabled={isAuditing || isProcessing}
+              className="w-full py-2.5 bg-orange-50 border border-orange-300 text-orange-700 font-bold rounded-lg hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm flex items-center justify-center gap-2"
+            >
+              {isAuditing ? "🔍 Auditujem kód..." : "🔒 Spustiť bezpečnostný audit"}
+            </button>
+          </div>
+        )}
+
+        {/* Security Audit Results */}
+        {auditResult && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6 fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-slate-900 text-lg">🔒 Bezpečnostný audit</h3>
+              <div className="flex items-center gap-3">
+                <div className={`text-2xl font-extrabold ${auditResult.score >= 80 ? "text-green-600" : auditResult.score >= 60 ? "text-yellow-500" : "text-red-600"}`}>
+                  {auditResult.score}/100
+                </div>
+                <span className={`text-lg font-bold px-3 py-1 rounded-lg ${auditResult.grade === "A" ? "bg-green-100 text-green-700" : auditResult.grade === "B" ? "bg-blue-100 text-blue-700" : auditResult.grade === "C" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}>
+                  {auditResult.grade}
+                </span>
+              </div>
+            </div>
+
+            {auditResult.summary && (
+              <p className="text-sm text-slate-600 mb-4 leading-relaxed">{auditResult.summary}</p>
+            )}
+
+            {auditResult.strengths?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-bold text-green-700 uppercase mb-1.5">✅ Silné stránky</p>
+                <ul className="space-y-1">
+                  {auditResult.strengths.map((s: string, i: number) => (
+                    <li key={i} className="text-xs text-slate-600 flex gap-1.5"><span className="text-green-500">•</span>{s}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {auditResult.issues?.length > 0 && (
+              <div>
+                <p className="text-xs font-bold text-slate-600 uppercase mb-2">
+                  Problémy ({auditResult.total_issues || auditResult.issues.length})
+                </p>
+                <div className="space-y-2">
+                  {auditResult.issues.map((issue: any, i: number) => (
+                    <div key={i} className={`rounded-xl border overflow-hidden ${issue.severity === "critical" ? "border-red-200 bg-red-50" : issue.severity === "warning" ? "border-yellow-200 bg-yellow-50" : "border-slate-200 bg-slate-50"}`}>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedIssue(expandedIssue === i ? null : i)}
+                        className="w-full text-left px-4 py-2.5 flex items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">{issue.severity === "critical" ? "🔴" : issue.severity === "warning" ? "🟡" : "🟢"}</span>
+                          <span className="text-sm font-bold text-slate-800">{issue.title || issue.file}</span>
+                        </div>
+                        <span className="text-slate-400 text-xs">{expandedIssue === i ? "▲" : "▼"}</span>
+                      </button>
+                      {expandedIssue === i && (
+                        <div className="px-4 pb-3 text-xs text-slate-600 space-y-1">
+                          <p><strong>Súbor:</strong> {issue.file}</p>
+                          <p>{issue.description}</p>
+                          {issue.fix && <p className="text-green-700"><strong>Fix:</strong> {issue.fix}</p>}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -747,9 +1144,12 @@ function DeployPage() {
   const [deploySteps, setDeploySteps] = useState<"idle" | "validate" | "build" | "wait" | "verify" | "done">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [isSimulated, setIsSimulated] = useState(false);
+
   const handleDeploy = async () => {
     setIsDeploying(true);
     setErrorMessage("");
+    setIsSimulated(false);
     setDeploySteps("validate");
 
     try {
@@ -760,9 +1160,9 @@ function DeployPage() {
       setDeploySteps("wait");
 
       const response = await fetch("/api/deploy", { method: "POST" });
+      const data = await response.json();
 
       if (response.status === 503) {
-        const data = await response.json() as { configured: boolean; message?: string };
         setErrorMessage(`⚠️ Deploy nie je nastavený. ${data.message || ""}`);
         setDeploySteps("idle");
         setIsDeploying(false);
@@ -770,6 +1170,10 @@ function DeployPage() {
       }
 
       if (!response.ok) throw new Error("Deploy failed");
+
+      if (data.status === 'simulated') {
+        setIsSimulated(true);
+      }
 
       await new Promise(r => setTimeout(r, 2000)); // Wait step
       setDeploySteps("verify");
@@ -780,6 +1184,7 @@ function DeployPage() {
       setTimeout(() => {
         setDeploySteps("idle");
         setIsDeploying(false);
+        setIsSimulated(false);
       }, 1500);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "Unknown error");
@@ -800,7 +1205,14 @@ function DeployPage() {
   return (
     <div className="p-8 fade-in">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">🚀 Deploy to Production</h1>
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-3xl font-bold text-slate-900">🚀 Deploy to Production</h1>
+          {isSimulated && (
+            <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest border border-amber-200 animate-pulse">
+              Simulation Active
+            </span>
+          )}
+        </div>
         <p className="text-slate-600 mb-8">
           Spustí workflow: validácia projektov → trigger Vercel build → čakanie → verifikácia.
         </p>
@@ -852,6 +1264,109 @@ function DeployPage() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
           <p className="text-sm text-amber-900">
             <strong>📌 Poznámka:</strong> Deploy workflow vyžaduje VERCEL_DEPLOY_HOOK_URL. Nastav ho v Vercel Dashboard.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── PROMPTS PAGE ── */
+function PromptsPage() {
+  const categories = [
+    { title: "🔍 Forensic Analysis", desc: "Prompty pre hĺbkovú analýzu URL a repozitárov.", icon: "🕵️" },
+    { title: "⚙️ System Prompts", desc: "Základné inštrukcie pre AI agentov.", icon: "🤖" },
+    { title: "🧠 Agentic Coding", desc: "Prompty pre autonómne programovanie a refaktor.", icon: "🛠️" }
+  ];
+
+  return (
+    <div className="p-8 sm:p-12 max-w-6xl mx-auto fade-in">
+      <div className="mb-10 text-left">
+        <h2 className="text-4xl font-black text-slate-900 mb-2 tracking-tight">Prompty</h2>
+        <p className="text-slate-600 text-lg">Správa AI inštrukcií pre Neon Bloom Messenger.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {categories.map((cat, i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow text-left">
+            <div className="text-3xl mb-4">{cat.icon}</div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">{cat.title}</h3>
+            <p className="text-sm text-slate-500 mb-4">{cat.desc}</p>
+            <button className="text-xs font-bold text-purple-600 hover:text-purple-700 uppercase tracking-widest">
+              Upraviť šablónu →
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-slate-900 rounded-3xl p-8 text-white border border-slate-800 shadow-2xl relative overflow-hidden text-left">
+        <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl">⌨️</div>
+        <h3 className="text-2xl font-bold mb-4 relative z-10">Hlavný Systémový Prompt</h3>
+        <div className="bg-slate-800/50 rounded-xl p-6 font-mono text-sm text-slate-300 border border-slate-700/50 mb-6 max-h-60 overflow-y-auto">
+          {`Ste Antigravity, pokročilý AI agent pre Neon Bloom...
+Hľadajte URL vzory a extrahujte metadáta s vysokou presnosťou.
+Zamerajte sa na forensic-style analýzu kódu a bezpečnosť.`}
+        </div>
+        <button className="px-6 py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors">
+          Aktualizovať Globálny Prompt
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── SORTABLE PAGE ── */
+function SortablePage() {
+  return (
+    <div className="p-8 sm:p-12 max-w-6xl mx-auto fade-in text-left">
+      <div className="mb-10">
+        <h2 className="text-4xl font-black text-slate-900 mb-2 tracking-tight">Sortable UI</h2>
+        <p className="text-slate-600 text-lg">Experimentálne Drag & Drop rozhranie.</p>
+      </div>
+
+      <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+        {/* Drag and Drop Container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Left Track</h3>
+            <ul id="hs-shared-left-sortable" className="flex flex-col gap-2">
+              {[
+                { label: "Newsletter", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg> },
+                { label: "Downloads", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg> },
+                { label: "Team Account", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> }
+              ].map((item, i) => (
+                <li key={i} className="inline-flex items-center gap-x-3 py-4 px-5 cursor-grab text-sm font-bold bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl hover:bg-white hover:border-purple-300 hover:shadow-lg transition-all group">
+                  <div className="text-purple-500 group-hover:scale-110 transition-transform">{item.icon}</div>
+                  {item.label}
+                  <svg className="shrink-0 size-4 ms-auto text-slate-300 group-hover:text-purple-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Right Track</h3>
+            <ul id="hs-shared-right-sortable" className="flex flex-col gap-2">
+              {[
+                { label: "Questions", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg> },
+                { label: "Settings", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="15" r="3"></circle><circle cx="9" cy="7" r="4"></circle><path d="M10 15H6a4 4 0 0 0-4 4v2"></path><path d="m21.7 16.4-.9-.3"></path><path d="m15.2 13.9-.9-.3"></path><path d="m16.6 18.7.3-.9"></path><path d="m19.1 12.2.3-.9"></path><path d="m19.6 18.7-.4-1"></path><path d="m16.8 12.3-.4-1"></path><path d="m14.3 16.6 1-.4"></path><path d="m20.7 13.8 1-.4"></path></svg> },
+                { label: "Activity", icon: <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg> }
+              ].map((item, i) => (
+                <li key={i} className="inline-flex items-center gap-x-3 py-4 px-5 cursor-grab text-sm font-bold bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl hover:bg-white hover:border-blue-300 hover:shadow-lg transition-all group">
+                  <div className="text-blue-500 group-hover:scale-110 transition-transform">{item.icon}</div>
+                  {item.label}
+                  <svg className="shrink-0 size-4 ms-auto text-slate-300 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-12 p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+          <p className="text-xs text-slate-400 font-bold uppercase mb-2">HustleDev Note</p>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            Toto rozhranie je pripravené na prepojenie so <strong>SortableJS</strong>. 
+            Môžete ho použiť na prioritizáciu projektov v portfóliu alebo usporiadanie nástrojov v menu.
           </p>
         </div>
       </div>

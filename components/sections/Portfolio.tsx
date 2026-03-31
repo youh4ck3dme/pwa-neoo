@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import ProjectCard from "@/components/ui/ProjectCard";
-import DropZone from "@/components/sections/DropZone";
+import DropZone, { ProjectSource } from "@/components/sections/DropZone";
 import UploadModal from "@/components/sections/UploadModal";
 
 interface Project {
@@ -13,35 +13,38 @@ interface Project {
 }
 
 const Portfolio = () => {
-  const sampleProject: Project = {
-    title: "SecureVault Enterprise",
-    imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    shortDescription: "Hardened PWA s end-to-end šifrovaním a biometrickou autentifikáciou pre bankový sektor.",
-    technologies: ["Next.js 15", "WAF", "MFA"],
-    specialFeatures: ["E2EE Encryption", "Biometrics", "Audit Logs", "PWA"]
-  };
-
   const [projects, setProjects] = useState<Project[]>(() => {
-    if (typeof window === "undefined") return [sampleProject];
+    if (typeof window === "undefined") return [];
     try {
-      const saved = localStorage.getItem("magica-portfolio-projects");
-      if (saved) return JSON.parse(saved) as Project[];
-    } catch {}
-    return [sampleProject];
+      const saved = localStorage.getItem("magica-portfolio-projects-v2");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Project[];
+        return parsed;
+      }
+    } catch {
+      console.warn("[Portfolio] Failed to parse localStorage projects.");
+    }
+    return [];
   });
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
+  const [selectedSource, setSelectedSource] = useState<ProjectSource | null>(null);
 
   useEffect(() => {
-    try {
-      localStorage.setItem("magica-portfolio-projects", JSON.stringify(projects));
-    } catch (e) {
-      if (e instanceof DOMException && (e.code === 22 || e.name === "QuotaExceededError")) {
-        console.warn("[Portfolio] localStorage quota exceeded, clearing old data and retrying...");
-        try {
-          localStorage.removeItem("magica-portfolio-projects");
-          localStorage.setItem("magica-portfolio-projects", JSON.stringify(projects));
-        } catch {
-          console.error("[Portfolio] Failed to save projects even after clearing storage.");
+    if (projects.length > 0) {
+      try {
+        localStorage.setItem("magica-portfolio-projects-v2", JSON.stringify(projects));
+      } catch (e) {
+        const isQuotaExceeded = e instanceof DOMException && 
+          (e.code === 22 || e.code === 1014 || e.name === "QuotaExceededError" || e.name === "NS_ERROR_DOM_QUOTA_REACHED");
+        
+        if (isQuotaExceeded) {
+          console.warn("[Portfolio] Critical: localStorage quota exceeded. Attempting recovery...");
+          try {
+            localStorage.removeItem("magica-portfolio-projects-v2");
+            localStorage.setItem("magica-portfolio-projects-v2", JSON.stringify(projects));
+          } catch (retryError) {
+            console.error("[Portfolio] Hard Failure: Data exceeds browser limits.", retryError);
+          }
         }
       }
     }
@@ -53,31 +56,40 @@ const Portfolio = () => {
       try {
         const response = await fetch("/api/projects");
         const data = (await response.json()) as Project[];
-        // If API returns projects, prepend sampleProject + add API projects
+        
         if (data.length > 0) {
+          console.log("[Portfolio] Syncing with API projects:", data.length);
           setProjects((prev) => {
-            const hasProjects = prev.some((p) => p.title.includes("SecureVault"));
-            return hasProjects ? [...prev, ...data] : [prev[0], ...data];
+            // Keep unique titles, prioritize incoming API data
+            const existingTitles = new Set(data.map(p => p.title));
+            const uniquePrev = prev.filter(p => !existingTitles.has(p.title));
+            return [...uniquePrev, ...data];
           });
         }
       } catch (err) {
-        // API error or offline — fallback to localStorage (already set in initial state)
-        console.log("Portfolio: API fetch skipped, using localStorage");
+        console.log("[Portfolio] API fetch skipped, relying on local state.");
       }
     };
     fetchProjects();
   }, []);
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
+  const handleSourceSelect = (source: ProjectSource) => {
+    setSelectedSource(source);
   };
 
   const handleProjectAdd = (project: Project) => {
-    setProjects((prev) => [...prev, project]);
+    console.log("[Portfolio] Adding new project:", project.title);
+    setProjects((prev) => {
+      // Avoid exact duplicates by title
+      if (prev.some(p => p.title === project.title)) {
+        return prev;
+      }
+      return [...prev, project];
+    });
   };
 
   const handleModalClose = () => {
-    setSelectedFile(null);
+    setSelectedSource(null);
   };
 
   return (
@@ -90,15 +102,18 @@ const Portfolio = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start mt-12">
             {/* Dropzone Column */}
             <div className="lg:col-span-1">
-              <DropZone onFileSelect={handleFileSelect} />
+              <DropZone onSourceSelect={handleSourceSelect} />
             </div>
 
             {/* Portfolio Grid */}
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
               {projects.map((project, index) => (
-                <ProjectCard key={`${project.title}-${index}`} project={project} />
+                <ProjectCard 
+                  key={`${project.title}-${index}-${project.imageUrl.slice(-10)}`} 
+                  project={project} 
+                />
               ))}
-              {projects.length === 1 && (
+              {projects.length === 0 && (
                 <div className="bg-slate-50 border border-dashed border-slate-200 rounded-2xl flex items-center justify-center p-8 opacity-60">
                   <div className="text-center">
                     <p className="text-sm font-bold text-slate-400">Tvoj ďalší projekt tu...</p>
@@ -111,9 +126,9 @@ const Portfolio = () => {
       </section>
 
       {/* Upload Modal */}
-      {selectedFile && (
+      {selectedSource && (
         <UploadModal
-          file={selectedFile}
+          source={selectedSource}
           onClose={handleModalClose}
           onProjectAdd={handleProjectAdd}
         />
